@@ -492,8 +492,8 @@
                 <div class="user-info">
                     <div class="user-avatar">👨‍🏫</div>
                     <div class="user-details">
-                        <h3>Max Teacher</h3>
-                        <p>Premium Account</p>
+                        <h3 id="userFullName">Max Teacher</h3>
+                        <p id="userEmail">Premium Account</p>
                     </div>
                 </div>
                 <div style="font-size: 12px; opacity: 0.8;">Welcome back!</div>
@@ -552,7 +552,7 @@
         <main class="main-content">
             <header class="header">
                 <div class="welcome-text">
-                    <h1>Welcome back, Max! 👋</h1>
+                    <h1 id="welcomeHeader">Welcome back! 👋</h1>
                     <p>Ready to create some amazing educational content today?</p>
                 </div>
                 <div class="header-actions">
@@ -1031,7 +1031,8 @@
 
         function logout() {
             if (confirm('Are you sure you want to logout?')) {
-                window.location.href = 'index.html';
+                localStorage.removeItem('accessToken'); // Clear the session token
+                window.location.href = '/index.html';    // Redirect to home
             }
         }
 
@@ -1045,8 +1046,50 @@
         });
 
         // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('Teacher Dashboard loaded successfully!');
+        document.addEventListener('DOMContentLoaded', async () => {
+            const token = localStorage.getItem('accessToken');
+        
+            // 1. Check if a login token exists
+            if (!token) {
+                // If no token, the user is not logged in. Redirect to login page.
+                window.location.href = '/login.html';
+                return; // Stop the script from running further
+            }
+        
+            // 2. If a token exists, use it to fetch the user's details
+            try {
+                const response = await fetch('/api/auth/users/me', {
+                    method: 'GET',
+                    headers: {
+                        // Send the token in the Authorization header
+                        'Authorization': `Bearer ${token}` 
+                    }
+                });
+            
+                if (response.ok) {
+                    // If the token is valid, the server will return the user's data
+                    const user = await response.json();
+                
+                    // 3. Update the page with the user's real data
+                    document.getElementById('userFullName').textContent = user.full_name;
+                    document.getElementById('userEmail').textContent = user.email;
+                    // Use the first name for a friendly welcome
+                    document.getElementById('welcomeHeader').textContent = `Welcome back, ${user.full_name.split(' ')[0]}! 👋`;
+                
+                    console.log('Teacher Dashboard loaded and personalized successfully!');
+                
+                } else {
+                    // If the token is invalid or expired, the server will send an error
+                    console.error('Authentication failed. Redirecting to login.');
+                    localStorage.removeItem('accessToken'); // Clear the bad token
+                    window.location.href = '/login.html';
+                }
+            } catch (error) {
+                console.error('Failed to fetch user data:', error);
+                // If the server can't be reached, also redirect to login
+                localStorage.removeItem('accessToken');
+                window.location.href = '/login.html';
+            }
         });
     </script>
 </body>
