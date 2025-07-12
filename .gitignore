@@ -1,0 +1,45 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+.env/
+
+# VS Code settings
+.vscode/
+
+# Pytest cache
+.pytest_cache/
+
+# mypy
+.mypy_cache/
+
+# SQLAlchemy or Alembic
+alembic.ini
+*.sqlite3
+
+# Environment files
+*.env
+
+# Logs
+*.log
+
+# macOS files
+.DS_Store
+
+# Node modules (if applicable in frontend)
+node_modules/
+
+# Frontend build artifacts (if using build tools like Webpack/Vite)
+dist/
+build/
+*.cache/
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+
+# OS generated files
+Thumbs.db
+ehthumbs.db

@@ -1,0 +1,1085 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Collection - AI Teacher Toolkit</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 36px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 18px;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto 20px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+
+        .back-btn {
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: bold;
+        }
+
+        .back-btn:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .filter-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 45px 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-input:focus {
+            border-color: #667eea;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-size: 18px;
+        }
+
+        .filter-tags {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-tag {
+            padding: 8px 16px;
+            background: #f0f0f0;
+            border: 2px solid transparent;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .filter-tag:hover,
+        .filter-tag.active {
+            background: #667eea;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .sort-dropdown {
+            padding: 10px 15px;
+            border: 2px solid #ddd;
+            border-radius: 20px;
+            background: white;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .prompts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .prompt-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+        }
+
+        .prompt-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            border-color: #667eea;
+        }
+
+        .prompt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .prompt-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .prompt-meta {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .prompt-author {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .prompt-stats {
+            display: flex;
+            gap: 15px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .prompt-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            font-size: 15px;
+        }
+
+        .prompt-text {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #333;
+            margin-bottom: 20px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .prompt-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+            margin: 2px;
+        }
+
+        .tag-academic {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .tag-assessment {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .tag-communication {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .tag-creative {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .tag-planning {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        .tag-management {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .featured-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            margin-bottom: 40px;
+        }
+
+        .featured-title {
+            text-align: center;
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .featured-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 700px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .modal-header h2 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .prompt-full-text {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            font-family: 'Courier New', monospace;
+            line-height: 1.6;
+            color: #333;
+            margin: 20px 0;
+            white-space: pre-wrap;
+        }
+
+        .copy-success {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            text-align: center;
+            display: none;
+        }
+
+        .like-button {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: none;
+            border: 2px solid #667eea;
+            color: #667eea;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .like-button.liked {
+            background: #667eea;
+            color: white;
+        }
+
+        .like-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .prompts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            .filter-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                min-width: auto;
+            }
+
+            .header h1 {
+                font-size: 28px;
+                flex-direction: column;
+            }
+
+            .prompt-actions {
+                justify-content: center;
+            }
+        }
+
+        .contribute-section {
+            background: rgba(102, 126, 234, 0.1);
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .contribute-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+
+        .contribute-section p {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <span>📚</span>
+                Prompt Collection
+            </h1>
+            <p>
+                Discover and share powerful AI prompts created by educators worldwide. From lesson planning to student assessment, 
+                find the perfect prompt for any teaching situation or contribute your own to help the community.
+            </p>
+            <div class="header-actions">
+                <a href="login.html" class="back-btn">← Back to Dashboard</a>
+                <button class="btn btn-primary" onclick="showContributeModal()">+ Add Your Prompt</button>
+            </div>
+        </div>
+
+        <!-- Featured Prompts Section -->
+        <div class="featured-section">
+            <h2 class="featured-title">⭐ Featured Prompts</h2>
+            <div class="featured-grid">
+                <div class="prompt-card" style="border: 2px solid #ffd700;">
+                    <div class="prompt-header">
+                        <div>
+                            <div class="prompt-title">🏆 Universal Lesson Planner</div>
+                            <div class="prompt-meta">
+                                <span class="prompt-author">By Sarah Martinez</span>
+                                <span class="tag tag-planning">Planning</span>
+                            </div>
+                        </div>
+                        <div class="prompt-stats">
+                            <div class="stat-item">
+                                <span>❤️</span>
+                                <span>342</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>📥</span>
+                                <span>1.2k</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="prompt-description">
+                        Create comprehensive lesson plans for any subject and grade level with learning objectives, activities, and assessments.
+                    </div>
+                    <div class="prompt-actions">
+                        <button class="btn btn-primary" onclick="viewPrompt('featured-1')">View Prompt</button>
+                        <button class="btn btn-secondary" onclick="copyPrompt('featured-1')">Copy</button>
+                        <button class="like-button" onclick="toggleLike(this)">
+                            <span>❤️</span>
+                            <span>342</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="prompt-card" style="border: 2px solid #ffd700;">
+                    <div class="prompt-header">
+                        <div>
+                            <div class="prompt-title">🎯 Differentiated Assessment Creator</div>
+                            <div class="prompt-meta">
+                                <span class="prompt-author">By Michael Chen</span>
+                                <span class="tag tag-assessment">Assessment</span>
+                            </div>
+                        </div>
+                        <div class="prompt-stats">
+                            <div class="stat-item">
+                                <span>❤️</span>
+                                <span>298</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>📥</span>
+                                <span>956</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="prompt-description">
+                        Generate assessments adapted to different learning styles and ability levels while maintaining academic standards.
+                    </div>
+                    <div class="prompt-actions">
+                        <button class="btn btn-primary" onclick="viewPrompt('featured-2')">View Prompt</button>
+                        <button class="btn btn-secondary" onclick="copyPrompt('featured-2')">Copy</button>
+                        <button class="like-button" onclick="toggleLike(this)">
+                            <span>❤️</span>
+                            <span>298</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <div class="filter-controls">
+                <div class="search-box">
+                    <input type="text" class="search-input" placeholder="Search prompts..." id="searchInput" oninput="filterPrompts()">
+                    <span class="search-icon">🔍</span>
+                </div>
+                
+                <div class="filter-tags">
+                    <span class="filter-tag active" onclick="filterByCategory(this, 'all')">All</span>
+                    <span class="filter-tag" onclick="filterByCategory(this, 'academic')">Academic</span>
+                    <span class="filter-tag" onclick="filterByCategory(this, 'assessment')">Assessment</span>
+                    <span class="filter-tag" onclick="filterByCategory(this, 'communication')">Communication</span>
+                    <span class="filter-tag" onclick="filterByCategory(this, 'creative')">Creative</span>
+                    <span class="filter-tag" onclick="filterByCategory(this, 'planning')">Planning</span>
+                    <span class="filter-tag" onclick="filterByCategory(this, 'management')">Management</span>
+                </div>
+                
+                <select class="sort-dropdown" onchange="sortPrompts(this.value)">
+                    <option value="popular">Most Popular</option>
+                    <option value="recent">Most Recent</option>
+                    <option value="alphabetical">A-Z</option>
+                    <option value="usage">Most Used</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Community Contribution Section -->
+        <div class="contribute-section">
+            <h3>💡 Share Your Teaching Wisdom</h3>
+            <p>Have a powerful prompt that's transformed your teaching? Share it with educators worldwide and help build our collective AI teaching toolkit.</p>
+            <button class="btn btn-primary" onclick="showContributeModal()">Contribute a Prompt</button>
+        </div>
+
+        <!-- Prompts Grid -->
+        <div class="prompts-grid" id="promptsGrid">
+            <!-- Academic Prompts -->
+            <div class="prompt-card" data-category="academic">
+                <div class="prompt-header">
+                    <div>
+                        <div class="prompt-title">📊 Data Analysis Teacher</div>
+                        <div class="prompt-meta">
+                            <span class="prompt-author">By Lisa Thompson</span>
+                            <span class="tag tag-academic">Academic</span>
+                        </div>
+                    </div>
+                    <div class="prompt-stats">
+                        <div class="stat-item">
+                            <span>❤️</span>
+                            <span>156</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>📥</span>
+                            <span>423</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="prompt-description">
+                    Help students understand complex data sets and statistical concepts through guided analysis and interpretation.
+                </div>
+                <div class="prompt-text">
+                    Act as a statistics teacher. Help me explain [statistical concept] to [grade level] students. Provide a real-world example, break down the calculation steps, and create practice problems...
+                </div>
+                <div class="prompt-actions">
+                    <button class="btn btn-primary" onclick="viewPrompt('academic-1')">View Full</button>
+                    <button class="btn btn-secondary" onclick="copyPrompt('academic-1')">Copy</button>
+                    <button class="like-button" onclick="toggleLike(this)">
+                        <span>❤️</span>
+                        <span>156</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Assessment Prompts -->
+            <div class="prompt-card" data-category="assessment">
+                <div class="prompt-header">
+                    <div>
+                        <div class="prompt-title">✅ Rubric Generator Pro</div>
+                        <div class="prompt-meta">
+                            <span class="prompt-author">By James Rodriguez</span>
+                            <span class="tag tag-assessment">Assessment</span>
+                        </div>
+                    </div>
+                    <div class="prompt-stats">
+                        <div class="stat-item">
+                            <span>❤️</span>
+                            <span>234</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>📥</span>
+                            <span>678</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="prompt-description">
+                    Create detailed, standards-aligned rubrics for any assignment with clear performance indicators and scoring criteria.
+                </div>
+                <div class="prompt-text">
+                    Create a detailed rubric for [assignment type] for [grade level] students. Include 4 performance levels (Excellent, Proficient, Developing, Beginning) with specific criteria for [skills to assess]...
+                </div>
+                <div class="prompt-actions">
+                    <button class="btn btn-primary" onclick="viewPrompt('assessment-1')">View Full</button>
+                    <button class="btn btn-secondary" onclick="copyPrompt('assessment-1')">Copy</button>
+                    <button class="like-button" onclick="toggleLike(this)">
+                        <span>❤️</span>
+                        <span>234</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Communication Prompts -->
+            <div class="prompt-card" data-category="communication">
+                <div class="prompt-header">
+                    <div>
+                        <div class="prompt-title">📞 Parent Communication Helper</div>
+                        <div class="prompt-meta">
+                            <span class="prompt-author">By Angela Davis</span>
+                            <span class="tag tag-communication">Communication</span>
+                        </div>
+                    </div>
+                    <div class="prompt-stats">
+                        <div class="stat-item">
+                            <span>❤️</span>
+                            <span>189</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>📥</span>
+                            <span>512</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="prompt-description">
+                    Craft professional, empathetic parent communications for various situations while maintaining positive relationships.
+                </div>
+                <div class="prompt-text">
+                    Help me write a professional email to a parent about [situation]. The tone should be [supportive/informative/solution-focused]. Include specific observations, actionable suggestions...
+                </div>
+                <div class="prompt-actions">
+                    <button class="btn btn-primary" onclick="viewPrompt('communication-1')">View Full</button>
+                    <button class="btn btn-secondary" onclick="copyPrompt('communication-1')">Copy</button>
+                    <button class="like-button" onclick="toggleLike(this)">
+                        <span>❤️</span>
+                        <span>189</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Creative Prompts -->
+            <div class="prompt-card" data-category="creative">
+                <div class="prompt-header">
+                    <div>
+                        <div class="prompt-title">🎨 Creative Writing Catalyst</div>
+                        <div class="prompt-meta">
+                            <span class="prompt-author">By Maria Garcia</span>
+                            <span class="tag tag-creative">Creative</span>
+                        </div>
+                    </div>
+                    <div class="prompt-stats">
+                        <div class="stat-item">
+                            <span>❤️</span>
+                            <span>267</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>📥</span>
+                            <span>789</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="prompt-description">
+                    Inspire student creativity with engaging writing prompts tailored to different genres, themes, and skill levels.
+                </div>
+                <div class="prompt-text">
+                    Generate 5 creative writing prompts for [grade level] about [theme/topic]. Include character suggestions, setting options, and conflict ideas. Make them engaging and age-appropriate...
+                </div>
+                <div class="prompt-actions">
+                    <button class="btn btn-primary" onclick="viewPrompt('creative-1')">View Full</button>
+                    <button class="btn btn-secondary" onclick="copyPrompt('creative-1')">Copy</button>
+                    <button class="like-button" onclick="toggleLike(this)">
+                        <span>❤️</span>
+                        <span>267</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Planning Prompts -->
+            <div class="prompt-card" data-category="planning">
+                <div class="prompt-header">
+                    <div>
+                        <div class="prompt-title">📅 Unit Planning Assistant</div>
+                        <div class="prompt-meta">
+                            <span class="prompt-author">By David Kim</span>
+                            <span class="tag tag-planning">Planning</span>
+                        </div>
+                    </div>
+                    <div class="prompt-stats">
+                        <div class="stat-item">
+                            <span>❤️</span>
+                            <span>178</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>📥</span>
+                            <span>445</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="prompt-description">
+                    Plan comprehensive learning units with sequential lessons, assessments, and differentiation strategies.
+                </div>
+                <div class="prompt-text">
+                    Help me plan a [duration] unit on [topic] for [grade level]. Include learning objectives, essential questions, daily activities, assessments, and accommodations for diverse learners...
+                </div>
+                <div class="prompt-actions">
+                    <button class="btn btn-primary" onclick="viewPrompt('planning-1')">View Full</button>
+                    <button class="btn btn-secondary" onclick="copyPrompt('planning-1')">Copy</button>
+                    <button class="like-button" onclick="toggleLike(this)">
+                        <span>❤️</span>
+                        <span>178</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Management Prompts -->
+            <div class="prompt-card" data-category="management">
+                <div class="prompt-header">
+                    <div>
+                        <div class="prompt-title">🎯 Behavior Intervention Planner</div>
+                        <div class="prompt-meta">
+                            <span class="prompt-author">By Rachel Wilson</span>
+                            <span class="tag tag-management">Management</span>
+                        </div>
+                    </div>
+                    <div class="prompt-stats">
+                        <div class="stat-item">
+                            <span>❤️</span>
+                            <span>198</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>📥</span>
+                            <span>334</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="prompt-description">
+                    Develop positive behavior intervention strategies that support students while maintaining a productive learning environment.
+                </div>
+                <div class="prompt-text">
+                    Help me create a behavior intervention plan for [specific behavior]. Include positive reinforcement strategies, environmental modifications, and data collection methods...
+                </div>
+                <div class="prompt-actions">
+                    <button class="btn btn-primary" onclick="viewPrompt('management-1')">View Full</button>
+                    <button class="btn btn-secondary" onclick="copyPrompt('management-1')">Copy</button>
+                    <button class="like-button" onclick="toggleLike(this)">
+                        <span>❤️</span>
+                        <span>198</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Prompt Detail Modal -->
+    <div id="promptModal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="hidePromptModal()">&times;</button>
+            <div class="modal-header">
+                <h2 id="modalTitle">Prompt Details</h2>
+                <p id="modalAuthor">By Author Name</p>
+            </div>
+            <div id="modalDescription" class="prompt-description"></div>
+            <div id="modalPromptText" class="prompt-full-text"></div>
+            <div class="copy-success" id="copySuccess">✅ Prompt copied to clipboard!</div>
+            <div style="display: flex; gap: 15px; margin-top: 20px;">
+                <button class="btn btn-primary" onclick="copyModalPrompt()">📋 Copy Prompt</button>
+                <button class="btn btn-secondary" onclick="hidePromptModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentFilter = 'all';
+        let currentSort = 'popular';
+        let prompts = {
+            'featured-1': {
+                title: 'Universal Lesson Planner',
+                author: 'Sarah Martinez',
+                description: 'Create comprehensive lesson plans for any subject and grade level with learning objectives, activities, and assessments.',
+                text: `Create a detailed lesson plan for [SUBJECT] at [GRADE LEVEL] on the topic of [TOPIC].
+
+Structure the lesson plan with:
+
+1. LEARNING OBJECTIVES (aligned with standards)
+   - What students will know
+   - What students will be able to do
+   - Essential questions
+
+2. MATERIALS & RESOURCES
+   - Required materials
+   - Technology needs
+   - Handouts/worksheets
+
+3. LESSON STRUCTURE (45-minute class)
+   - Opening/Hook (5 min)
+   - Direct instruction (15 min)
+   - Guided practice (15 min)
+   - Independent practice (8 min)
+   - Closure (2 min)
+
+4. DIFFERENTIATION STRATEGIES
+   - For advanced learners
+   - For struggling learners
+   - For ELL students
+
+5. ASSESSMENT
+   - Formative assessment methods
+   - Exit ticket ideas
+   - Homework/follow-up
+
+Make it engaging and age-appropriate with clear instructions for each activity.`
+            },
+            'featured-2': {
+                title: 'Differentiated Assessment Creator',
+                author: 'Michael Chen',
+                description: 'Generate assessments adapted to different learning styles and ability levels while maintaining academic standards.',
+                text: `Create a differentiated assessment for [SUBJECT] topic: [TOPIC] for [GRADE LEVEL].
+
+Provide THREE versions:
+
+VERSION A (Advanced/Accelerated):
+- Higher-order thinking questions
+- Analysis and synthesis tasks
+- Creative application problems
+- Extended response opportunities
+
+VERSION B (On-Grade Level):
+- Standard curriculum expectations
+- Mix of recall and application
+- Clear scaffolding provided
+- Multiple question formats
+
+VERSION C (Modified/Support):
+- Simplified language
+- Visual supports included
+- Chunked into smaller parts
+- Word bank/multiple choice options
+
+For each version include:
+- 5-7 questions/tasks
+- Point values
+- Success criteria
+- Accommodations notes
+
+Ensure all versions assess the same core concepts while providing appropriate challenge levels.`
+            }
+        };
+
+        // Filter and search functions
+        function filterByCategory(element, category) {
+            currentFilter = category;
+            
+            // Update active filter tag
+            document.querySelectorAll('.filter-tag').forEach(tag => {
+                tag.classList.remove('active');
+            });
+            element.classList.add('active');
+            
+            // Filter prompt cards
+            const cards = document.querySelectorAll('.prompt-card');
+            cards.forEach(card => {
+                if (category === 'all' || card.dataset.category === category) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function filterPrompts() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.querySelectorAll('.prompt-card');
+            
+            cards.forEach(card => {
+                const title = card.querySelector('.prompt-title').textContent.toLowerCase();
+                const description = card.querySelector('.prompt-description').textContent.toLowerCase();
+                const author = card.querySelector('.prompt-author').textContent.toLowerCase();
+                
+                const matches = title.includes(searchTerm) || 
+                               description.includes(searchTerm) || 
+                               author.includes(searchTerm);
+                
+                const categoryMatch = currentFilter === 'all' || card.dataset.category === currentFilter;
+                
+                card.style.display = (matches && categoryMatch) ? 'block' : 'none';
+            });
+        }
+
+        function sortPrompts(sortBy) {
+            currentSort = sortBy;
+            // In a real application, this would re-order the cards
+            console.log('Sorting by:', sortBy);
+        }
+
+        // Prompt interaction functions
+        function viewPrompt(promptId) {
+            const prompt = prompts[promptId];
+            if (prompt) {
+                document.getElementById('modalTitle').textContent = prompt.title;
+                document.getElementById('modalAuthor').textContent = `By ${prompt.author}`;
+                document.getElementById('modalDescription').textContent = prompt.description;
+                document.getElementById('modalPromptText').textContent = prompt.text;
+                document.getElementById('promptModal').classList.add('show');
+            } else {
+                alert('Full prompt content would be displayed here in the complete version.');
+            }
+        }
+
+        function copyPrompt(promptId) {
+            const prompt = prompts[promptId];
+            if (prompt) {
+                navigator.clipboard.writeText(prompt.text).then(() => {
+                    showCopySuccess();
+                });
+            } else {
+                // Fallback for prompts without full content
+                navigator.clipboard.writeText('Sample prompt text copied to clipboard!').then(() => {
+                    showCopySuccess();
+                });
+            }
+        }
+
+        function copyModalPrompt() {
+            const promptText = document.getElementById('modalPromptText').textContent;
+            navigator.clipboard.writeText(promptText).then(() => {
+                document.getElementById('copySuccess').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('copySuccess').style.display = 'none';
+                }, 3000);
+            });
+        }
+
+        function showCopySuccess() {
+            // Create temporary success message
+            const successMsg = document.createElement('div');
+            successMsg.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #28a745;
+                color: white;
+                padding: 15px 20px;
+                border-radius: 10px;
+                z-index: 3000;
+                font-weight: bold;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            `;
+            successMsg.textContent = '✅ Prompt copied to clipboard!';
+            document.body.appendChild(successMsg);
+            
+            setTimeout(() => {
+                successMsg.remove();
+            }, 3000);
+        }
+
+        function toggleLike(button) {
+            button.classList.toggle('liked');
+            const countSpan = button.querySelector('span:last-child');
+            let count = parseInt(countSpan.textContent);
+            
+            if (button.classList.contains('liked')) {
+                count++;
+                button.style.background = '#667eea';
+                button.style.color = 'white';
+            } else {
+                count--;
+                button.style.background = 'none';
+                button.style.color = '#667eea';
+            }
+            
+            countSpan.textContent = count;
+        }
+
+        function hidePromptModal() {
+            document.getElementById('promptModal').classList.remove('show');
+        }
+
+        function showContributeModal() {
+            alert('Contribution form would open here! Teachers could submit their own prompts to share with the community.');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('promptModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hidePromptModal();
+            }
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Prompt Collection loaded successfully!');
+        });
+    </script>
+</body>
+</html>

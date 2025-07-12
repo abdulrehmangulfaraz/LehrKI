@@ -1,0 +1,1053 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard - AI Teacher Toolkit</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .user-details h3 {
+            margin-bottom: 5px;
+            font-size: 18px;
+        }
+
+        .user-details p {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .nav-section {
+            padding: 20px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .nav-title {
+            padding: 0 20px 10px;
+            font-weight: bold;
+            color: #666;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nav-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            border-left-color: #667eea;
+            transform: translateX(5px);
+        }
+
+        .nav-item.active {
+            background: rgba(102, 126, 234, 0.2);
+            border-left-color: #667eea;
+            font-weight: bold;
+        }
+
+        .nav-icon {
+            font-size: 18px;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .welcome-text h1 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .welcome-text p {
+            color: #666;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .dashboard-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .card-icon {
+            font-size: 40px;
+            color: #667eea;
+        }
+
+        .card-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .card-content {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: bold;
+            color: #667eea;
+            display: block;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .prompt-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .prompt-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .prompt-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .prompt-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .prompt-text {
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .prompt-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-small {
+            padding: 5px 12px;
+            font-size: 12px;
+            border-radius: 15px;
+        }
+
+        .shared-items {
+            max-height: 350px;
+            overflow-y: auto;
+        }
+
+        .shared-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .shared-info {
+            flex: 1;
+        }
+
+        .shared-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .shared-meta {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .modal-header h2 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .modal-actions .btn {
+            flex: 1;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 4px 8px;
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            border-radius: 12px;
+            font-size: 12px;
+            margin: 2px;
+        }
+
+        .recent-activity {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(102, 126, 234, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #667eea;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .activity-time {
+            font-size: 12px;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="user-info">
+                    <div class="user-avatar">👨‍🏫</div>
+                    <div class="user-details">
+                        <h3>Max Teacher</h3>
+                        <p>Premium Account</p>
+                    </div>
+                </div>
+                <div style="font-size: 12px; opacity: 0.8;">Welcome back!</div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">🏠 Dashboard</div>
+                <div class="nav-item active" onclick="showSection('dashboard')">
+                    <span class="nav-icon">📊</span>
+                    <span>Overview</span>
+                </div>
+                <div class="nav-item" onclick="showSection('my-prompts')">
+                    <span class="nav-icon">💭</span>
+                    <span>My Prompts</span>
+                </div>
+                <div class="nav-item" onclick="showSection('shared-content')">
+                    <span class="nav-icon">🤝</span>
+                    <span>Shared Content</span>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">🔧 Tools</div>
+                <div class="nav-item" onclick="navigateToTool('prompt-collection')">
+                    <span class="nav-icon">📚</span>
+                    <span>Prompt Collection</span>
+                </div>
+                <div class="nav-item" onclick="navigateToTool('writing-assistant')">
+                    <span class="nav-icon">✏️</span>
+                    <span>Writing Assistant</span>
+                </div>
+                <div class="nav-item" onclick="navigateToTool('language-hub')">
+                    <span class="nav-icon">🔤</span>
+                    <span>Language Hub</span>
+                </div>
+                <div class="nav-item" onclick="navigateToTool('lesson-planner')">
+                    <span class="nav-icon">📋</span>
+                    <span>Lesson Planner</span>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">⚙️ Account</div>
+                <div class="nav-item" onclick="showSection('settings')">
+                    <span class="nav-icon">⚙️</span>
+                    <span>Settings</span>
+                </div>
+                <div class="nav-item" onclick="logout()">
+                    <span class="nav-icon">🚪</span>
+                    <span>Logout</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <div class="welcome-text">
+                    <h1>Welcome back, Max! 👋</h1>
+                    <p>Ready to create some amazing educational content today?</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" onclick="showModal('create-prompt')">+ New Prompt</button>
+                    <button class="btn btn-primary" onclick="showModal('share-content')">📤 Share Content</button>
+                </div>
+            </header>
+
+            <div class="content">
+                <!-- Dashboard Section -->
+                <section id="dashboard" class="section">
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-number">24</span>
+                            <div class="stat-label">Created Prompts</div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">12</span>
+                            <div class="stat-label">Shared Items</div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">156</span>
+                            <div class="stat-label">Community Likes</div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">7</span>
+                            <div class="stat-label">Day Streak</div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <div class="card-icon">🚀</div>
+                                <div class="card-title">Quick Actions</div>
+                            </div>
+                            <div class="card-content">
+                                <div style="display: flex; flex-direction: column; gap: 10px;">
+                                    <button class="btn btn-primary" onclick="showModal('create-prompt')">Create New Prompt</button>
+                                    <button class="btn btn-secondary" onclick="navigateToTool('prompt-collection')">Browse Collection</button>
+                                    <button class="btn btn-secondary" onclick="showModal('share-gpt')">Share GPT Link</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <div class="card-icon">📈</div>
+                                <div class="card-title">Recent Activity</div>
+                            </div>
+                            <div class="card-content">
+                                <div class="recent-activity">
+                                    <div class="activity-item">
+                                        <div class="activity-icon">💭</div>
+                                        <div class="activity-content">
+                                            <div class="activity-title">Created "Essay Grading Helper"</div>
+                                            <div class="activity-time">2 hours ago</div>
+                                        </div>
+                                    </div>
+                                    <div class="activity-item">
+                                        <div class="activity-icon">❤️</div>
+                                        <div class="activity-content">
+                                            <div class="activity-title">Received 5 likes on "Quiz Generator"</div>
+                                            <div class="activity-time">1 day ago</div>
+                                        </div>
+                                    </div>
+                                    <div class="activity-item">
+                                        <div class="activity-icon">🤝</div>
+                                        <div class="activity-content">
+                                            <div class="activity-title">Shared "Parent Conference Notes"</div>
+                                            <div class="activity-time">2 days ago</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <div class="card-icon">🏆</div>
+                                <div class="card-title">Achievements</div>
+                            </div>
+                            <div class="card-content">
+                                <div style="display: flex; flex-direction: column; gap: 15px;">
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <span style="font-size: 24px;">🥇</span>
+                                        <div>
+                                            <div style="font-weight: bold;">Prompt Creator</div>
+                                            <div style="font-size: 12px; color: #666;">Created 20+ prompts</div>
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <span style="font-size: 24px;">🌟</span>
+                                        <div>
+                                            <div style="font-weight: bold;">Community Helper</div>
+                                            <div style="font-size: 12px; color: #666;">Helped 100+ teachers</div>
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <span style="font-size: 24px;">🔥</span>
+                                        <div>
+                                            <div style="font-weight: bold;">Week Warrior</div>
+                                            <div style="font-size: 12px; color: #666;">7-day streak</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- My Prompts Section -->
+                <section id="my-prompts" class="section" style="display: none;">
+                    <h2 style="color: white; margin-bottom: 30px; text-align: center;">💭 My Prompts</h2>
+                    
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <div class="card-icon">💭</div>
+                            <div class="card-title">Your Created Prompts</div>
+                        </div>
+                        <div class="card-content">
+                            <div class="prompt-list">
+                                <div class="prompt-item">
+                                    <div class="prompt-title">
+                                        <span>📝 Essay Grading Helper</span>
+                                        <span class="tag">Academic</span>
+                                    </div>
+                                    <div class="prompt-text">
+                                        "Act as an experienced English teacher. Help me grade this student essay by providing constructive feedback on [writing style/grammar/content]. Focus on..."
+                                    </div>
+                                    <div class="prompt-actions">
+                                        <button class="btn btn-small btn-primary" onclick="usePrompt(0)">Use</button>
+                                        <button class="btn btn-small btn-secondary" onclick="editPrompt(0)">Edit</button>
+                                        <button class="btn btn-small btn-secondary" onclick="sharePrompt(0)">Share</button>
+                                    </div>
+                                </div>
+
+                                <div class="prompt-item">
+                                    <div class="prompt-title">
+                                        <span>❓ Quiz Generator</span>
+                                        <span class="tag">Assessment</span>
+                                    </div>
+                                    <div class="prompt-text">
+                                        "Create a multiple-choice quiz with 10 questions about [subject/topic]. Include answer explanations and difficulty levels appropriate for [grade level]..."
+                                    </div>
+                                    <div class="prompt-actions">
+                                        <button class="btn btn-small btn-primary" onclick="usePrompt(1)">Use</button>
+                                        <button class="btn btn-small btn-secondary" onclick="editPrompt(1)">Edit</button>
+                                        <button class="btn btn-small btn-secondary" onclick="sharePrompt(1)">Share</button>
+                                    </div>
+                                </div>
+
+                                <div class="prompt-item">
+                                    <div class="prompt-title">
+                                        <span>✉️ Parent Conference Notes</span>
+                                        <span class="tag">Communication</span>
+                                    </div>
+                                    <div class="prompt-text">
+                                        "Help me prepare talking points for a parent-teacher conference about [student name]. Include discussion about [academic progress/behavior/recommendations]..."
+                                    </div>
+                                    <div class="prompt-actions">
+                                        <button class="btn btn-small btn-primary" onclick="usePrompt(2)">Use</button>
+                                        <button class="btn btn-small btn-secondary" onclick="editPrompt(2)">Edit</button>
+                                        <button class="btn btn-small btn-secondary" onclick="sharePrompt(2)">Share</button>
+                                    </div>
+                                </div>
+
+                                <div class="prompt-item">
+                                    <div class="prompt-title">
+                                        <span>🎨 Creative Writing Starter</span>
+                                        <span class="tag">Creative</span>
+                                    </div>
+                                    <div class="prompt-text">
+                                        "Generate creative writing prompts for [grade level] students. Include character suggestions, setting ideas, and plot starters that encourage imagination..."
+                                    </div>
+                                    <div class="prompt-actions">
+                                        <button class="btn btn-small btn-primary" onclick="usePrompt(3)">Use</button>
+                                        <button class="btn btn-small btn-secondary" onclick="editPrompt(3)">Edit</button>
+                                        <button class="btn btn-small btn-secondary" onclick="sharePrompt(3)">Share</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Shared Content Section -->
+                <section id="shared-content" class="section" style="display: none;">
+                    <h2 style="color: white; margin-bottom: 30px; text-align: center;">🤝 Shared Content</h2>
+                    
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <div class="card-icon">📤</div>
+                                <div class="card-title">My Shared Items</div>
+                            </div>
+                            <div class="card-content">
+                                <div class="shared-items">
+                                    <div class="shared-item">
+                                        <div class="shared-info">
+                                            <div class="shared-title">Math Problem Solver GPT</div>
+                                            <div class="shared-meta">GPT Link • 23 likes • 2 days ago</div>
+                                        </div>
+                                        <button class="btn btn-small btn-secondary" onclick="viewShared(0)">View</button>
+                                    </div>
+
+                                    <div class="shared-item">
+                                        <div class="shared-info">
+                                            <div class="shared-title">Lesson Plan Template</div>
+                                            <div class="shared-meta">Document • 45 downloads • 1 week ago</div>
+                                        </div>
+                                        <button class="btn btn-small btn-secondary" onclick="viewShared(1)">View</button>
+                                    </div>
+
+                                    <div class="shared-item">
+                                        <div class="shared-info">
+                                            <div class="shared-title">Science Experiment Ideas</div>
+                                            <div class="shared-meta">Prompt Collection • 67 uses • 2 weeks ago</div>
+                                        </div>
+                                        <button class="btn btn-small btn-secondary" onclick="viewShared(2)">View</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <div class="card-icon">🌟</div>
+                                <div class="card-title">Community Favorites</div>
+                            </div>
+                            <div class="card-content">
+                                <div class="shared-items">
+                                    <div class="shared-item">
+                                        <div class="shared-info">
+                                            <div class="shared-title">Classroom Management GPT</div>
+                                            <div class="shared-meta">By Sarah J. • 234 likes</div>
+                                        </div>
+                                        <button class="btn btn-small btn-primary" onclick="useCommunityItem(0)">Use</button>
+                                    </div>
+
+                                    <div class="shared-item">
+                                        <div class="shared-info">
+                                            <div class="shared-title">Reading Comprehension Helper</div>
+                                            <div class="shared-meta">By Mike T. • 189 likes</div>
+                                        </div>
+                                        <button class="btn btn-small btn-primary" onclick="useCommunityItem(1)">Use</button>
+                                    </div>
+
+                                    <div class="shared-item">
+                                        <div class="shared-info">
+                                            <div class="shared-title">IEP Goal Generator</div>
+                                            <div class="shared-meta">By Lisa M. • 156 likes</div>
+                                        </div>
+                                        <button class="btn btn-small btn-primary" onclick="useCommunityItem(2)">Use</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Create Prompt Modal -->
+    <div id="createPromptModal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="hideModal('create-prompt')">&times;</button>
+            <div class="modal-header">
+                <h2>Create New Prompt</h2>
+                <p>Share your teaching expertise with the community</p>
+            </div>
+            <form id="createPromptForm">
+                <div class="form-group">
+                    <label for="promptTitle">Prompt Title</label>
+                    <input type="text" id="promptTitle" placeholder="e.g., Essay Grading Helper" required>
+                </div>
+                <div class="form-group">
+                    <label for="promptCategory">Category</label>
+                    <select id="promptCategory" required>
+                        <option value="">Select Category</option>
+                        <option value="academic">Academic</option>
+                        <option value="assessment">Assessment</option>
+                        <option value="communication">Communication</option>
+                        <option value="creative">Creative</option>
+                        <option value="planning">Planning</option>
+                        <option value="management">Classroom Management</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="promptText">Prompt Text</label>
+                    <textarea id="promptText" placeholder="Enter your AI prompt here. Use [brackets] for variables that users can customize..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="promptDescription">Description (Optional)</label>
+                    <textarea id="promptDescription" placeholder="Explain how to use this prompt and what makes it effective..."></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="hideModal('create-prompt')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Prompt</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Share Content Modal -->
+    <div id="shareContentModal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="hideModal('share-content')">&times;</button>
+            <div class="modal-header">
+                <h2>Share Content</h2>
+                <p>Share your ideas, GPTs, or resources with fellow teachers</p>
+            </div>
+            <form id="shareContentForm">
+                <div class="form-group">
+                    <label for="contentType">Content Type</label>
+                    <select id="contentType" required>
+                        <option value="">Select Type</option>
+                        <option value="gpt">Custom GPT</option>
+                        <option value="idea">Teaching Idea</option>
+                        <option value="resource">Resource/Document</option>
+                        <option value="tool">External Tool</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="contentTitle">Title</label>
+                    <input type="text" id="contentTitle" placeholder="e.g., Math Problem Solver GPT" required>
+                </div>
+                <div class="form-group">
+                    <label for="contentUrl">URL/Link (if applicable)</label>
+                    <input type="url" id="contentUrl" placeholder="https://chat.openai.com/g/g-...">
+                </div>
+                <div class="form-group">
+                    <label for="contentDescription">Description</label>
+                    <textarea id="contentDescription" placeholder="Describe your content and how other teachers can use it..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="contentTags">Tags (comma-separated)</label>
+                    <input type="text" id="contentTags" placeholder="math, problem-solving, middle-school">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="hideModal('share-content')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Share Content</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentSection = 'dashboard';
+
+        // Navigation functions
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).style.display = 'block';
+            
+            // Update active nav item
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Set active nav item
+            const targetNav = document.querySelector(`[onclick="showSection('${sectionId}')"]`);
+            if (targetNav) {
+                targetNav.classList.add('active');
+            }
+            
+            currentSection = sectionId;
+        }
+
+        function navigateToTool(toolName) {
+            if (toolName === 'prompt-collection') {
+                window.location.href = 'prompt-collection.html';
+            } else if (toolName === 'writing-assistant') {
+                window.location.href = 'writing-assistant.html';
+            } else if (toolName === 'language-hub') {
+                window.location.href = 'language-hub.html';
+            } else if (toolName === 'lesson-planner') {
+                window.location.href = 'lesson-planner.html';
+            }
+        }
+
+        // Modal functions
+        function showModal(modalType) {
+            const modal = document.getElementById(modalType.replace('-', '') + 'Modal');
+            if (modalType === 'share-gpt') {
+                // For share GPT, use the share content modal but pre-select GPT
+                document.getElementById('shareContentModal').classList.add('show');
+                document.getElementById('contentType').value = 'gpt';
+            } else {
+                modal.classList.add('show');
+            }
+        }
+
+        function hideModal(modalType) {
+            const modal = document.getElementById(modalType.replace('-', '') + 'Modal');
+            modal.classList.remove('show');
+        }
+
+        // Prompt functions
+        function usePrompt(index) {
+            const prompts = [
+                "Act as an experienced English teacher. Help me grade this student essay by providing constructive feedback on [writing style/grammar/content]. Focus on...",
+                "Create a multiple-choice quiz with 10 questions about [subject/topic]. Include answer explanations and difficulty levels appropriate for [grade level]...",
+                "Help me prepare talking points for a parent-teacher conference about [student name]. Include discussion about [academic progress/behavior/recommendations]...",
+                "Generate creative writing prompts for [grade level] students. Include character suggestions, setting ideas, and plot starters that encourage imagination..."
+            ];
+            
+            navigator.clipboard.writeText(prompts[index]).then(() => {
+                alert('Prompt copied to clipboard! You can now paste it into your AI tool of choice.');
+            });
+        }
+
+        function editPrompt(index) {
+            alert('Edit prompt functionality would open an edit form in the full version.');
+        }
+
+        function sharePrompt(index) {
+            alert('This prompt will be shared with the community! Other teachers can now discover and use it.');
+        }
+
+        function viewShared(index) {
+            alert('View shared content details in the full version.');
+        }
+
+        function useCommunityItem(index) {
+            const items = [
+                'https://chat.openai.com/g/g-classroom-management',
+                'Prompt for reading comprehension copied to clipboard!',
+                'IEP Goal Generator prompt copied to clipboard!'
+            ];
+            
+            if (items[index].startsWith('http')) {
+                window.open(items[index], '_blank');
+            } else {
+                alert(items[index]);
+            }
+        }
+
+        // Form submission handlers
+        document.getElementById('createPromptForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('promptTitle').value;
+            const category = document.getElementById('promptCategory').value;
+            const text = document.getElementById('promptText').value;
+            
+            // Simulate saving prompt
+            alert(`Prompt "${title}" created successfully! It's now available in your personal collection.`);
+            
+            hideModal('create-prompt');
+            
+            // Reset form
+            this.reset();
+        });
+
+        document.getElementById('shareContentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('contentTitle').value;
+            const type = document.getElementById('contentType').value;
+            
+            // Simulate sharing content
+            alert(`"${title}" has been shared with the community! Other teachers can now discover and use your ${type}.`);
+            
+            hideModal('share-content');
+            
+            // Reset form
+            this.reset();
+        });
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Close modals when clicking outside
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('show');
+                }
+            });
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Teacher Dashboard loaded successfully!');
+        });
+    </script>
+</body>
+</html>
