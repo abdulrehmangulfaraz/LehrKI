@@ -31,6 +31,11 @@ if not DB_NAME: missing_vars.append("DB_NAME")
 if not DB_USER: missing_vars.append("DB_USER")
 if not DB_PASSWORD: missing_vars.append("DB_PASSWORD")
 
+SECRET_KEY = os.getenv("SECRET_KEY")
+
+if not SECRET_KEY:
+    raise ValueError("ERROR: SECRET_KEY is not set in the .env file")
+
 if missing_vars:
     # If any variable is missing from the .env file, we list them.
     raise ValueError(f"ERROR: The following variables are missing from your .env file: {', '.join(missing_vars)}")

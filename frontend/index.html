@@ -2861,48 +2861,54 @@
                 }
 
                 // Login functionality
-                document.getElementById('loginForm').addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    console.log('Login form submitted'); // Debug
-                    
-                    const email = document.getElementById('loginEmail').value;
-                    const password = document.getElementById('loginPassword').value;
-                    
-                    console.log('Email:', email, 'Password:', password); // Debug
-                    
-                    // Hide any previous alerts
-                    const alert = document.getElementById('loginAlert');
-                    alert.classList.add('hidden');
-                    
-                    if (email === 'user@user.user' && password === 'user') {
-                        console.log('User login successful'); // Debug
-                        isLoggedIn = true;
-                        hideModal('login');
-                        alert.textContent = 'Login successful! Redirecting to dashboard...';
-                        alert.classList.remove('hidden');
-                        alert.className = 'alert success';
-                        // Redirect to user dashboard
-                        setTimeout(() => {
-                            window.location.href = 'dashboard.html';
-                        }, 1000);
-                    } else if (email === 'admin@admin.admin' && password === 'admin') {
-                        console.log('Admin login successful'); // Debug
-                        isLoggedIn = true;
-                        hideModal('login');
-                        alert.textContent = 'Admin login successful! Redirecting to admin dashboard...';
-                        alert.classList.remove('hidden');
-                        alert.className = 'alert success';
-                        // Redirect to admin dashboard
-                        setTimeout(() => {
-                            window.location.href = 'admin-dashboard.html';
-                        }, 1000);
-                    } else {
-                        console.log('Invalid credentials'); // Debug
-                        alert.textContent = 'Invalid credentials. Use user@user.user/user or admin@admin.admin/admin for demo.';
-                        alert.className = 'alert error';
-                        alert.classList.remove('hidden');
-                    }
+                        const loginForm = document.getElementById('loginForm');
+        const messageDiv = document.getElementById('message');
+
+        loginForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            messageDiv.textContent = '';
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // NOTE: The OAuth2PasswordRequestForm expects form data, not JSON.
+            const formData = new URLSearchParams();
+            formData.append('username', email);
+            formData.append('password', password);
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: formData,
                 });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Save the token to localStorage
+                    localStorage.setItem('accessToken', data.access_token);
+                    
+                    messageDiv.style.color = 'green';
+                    messageDiv.textContent = 'Login successful! Redirecting...';
+
+                    // Redirect based on the user's role
+                    if (data.user_role === 'admin') {
+                        window.location.href = '/admin-dashboard.html';
+                    } else {
+                        window.location.href = '/dashboard.html';
+                    }
+
+                } else {
+                    messageDiv.textContent = `Error: ${data.detail}`;
+                }
+            } catch (error) {
+                messageDiv.textContent = 'An unexpected error occurred.';
+                console.error('Login failed:', error);
+            }
+        });
 
                 // Register functionality
                 document.getElementById('registerForm').addEventListener('submit', function(e) {
