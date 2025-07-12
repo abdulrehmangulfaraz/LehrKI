@@ -4,12 +4,14 @@ from pydantic import BaseModel, EmailStr
 
 # Schema for creating a new user (request)
 class UserCreate(BaseModel):
+    full_name: str 
     email: EmailStr
     password: str
 
 # Schema for reading user data (response)
 class User(BaseModel):
     id: int
+    full_name: str 
     email: EmailStr
     is_active: bool
     role: str

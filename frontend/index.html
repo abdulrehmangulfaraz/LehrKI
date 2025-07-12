@@ -2861,73 +2861,91 @@
                 }
 
                 // Login functionality
-                        const loginForm = document.getElementById('loginForm');
-        const messageDiv = document.getElementById('message');
+                const loginForm = document.getElementById('loginForm');
+                const loginAlert = document.getElementById('loginAlert');
 
-        loginForm.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            messageDiv.textContent = '';
-
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            
-            // NOTE: The OAuth2PasswordRequestForm expects form data, not JSON.
-            const formData = new URLSearchParams();
-            formData.append('username', email);
-            formData.append('password', password);
-
-            try {
-                const response = await fetch('/api/auth/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: formData,
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    // Save the token to localStorage
-                    localStorage.setItem('accessToken', data.access_token);
+                if (loginForm) {
+                    loginForm.addEventListener('submit', async (event) => {
+                        event.preventDefault();
+                        loginAlert.classList.add('hidden');
                     
-                    messageDiv.style.color = 'green';
-                    messageDiv.textContent = 'Login successful! Redirecting...';
-
-                    // Redirect based on the user's role
-                    if (data.user_role === 'admin') {
-                        window.location.href = '/admin-dashboard.html';
-                    } else {
-                        window.location.href = '/dashboard.html';
-                    }
-
-                } else {
-                    messageDiv.textContent = `Error: ${data.detail}`;
+                        const email = document.getElementById('loginEmail').value;
+                        const password = document.getElementById('loginPassword').value;
+                    
+                        const formData = new URLSearchParams();
+                        formData.append('username', email);
+                        formData.append('password', password);
+                    
+                        try {
+                            const response = await fetch('/api/auth/login', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                body: formData.toString(),
+                            });
+                        
+                            const result = await response.json();
+                        
+                            if (response.ok) {
+                                localStorage.setItem('accessToken', result.access_token);
+                            
+                                if (result.user_role === 'admin') {
+                                    window.location.href = '/admin-dashboard.html';
+                                } else {
+                                    window.location.href = '/dashboard.html';
+                                }
+                            } else {
+                                loginAlert.textContent = `Error: ${result.detail}`;
+                                loginAlert.classList.remove('hidden');
+                            }
+                        } catch (error) {
+                            loginAlert.textContent = 'An unexpected network error occurred.';
+                            loginAlert.classList.remove('hidden');
+                        }
+                    });
                 }
-            } catch (error) {
-                messageDiv.textContent = 'An unexpected error occurred.';
-                console.error('Login failed:', error);
-            }
-        });
-
                 // Register functionality
-                document.getElementById('registerForm').addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    const password = document.getElementById('registerPassword').value;
-                    const confirmPassword = document.getElementById('registerConfirmPassword').value;
+                const registerForm = document.getElementById('registerForm');
+                const registerAlert = document.getElementById('registerAlert');
+                            
+                if (registerForm) {
+                    registerForm.addEventListener('submit', async (event) => {
+                        event.preventDefault();
+                        registerAlert.classList.add('hidden');
                     
-                    if (password !== confirmPassword) {
-                        const alert = document.getElementById('registerAlert');
-                        alert.textContent = 'Passwords do not match.';
-                        alert.classList.remove('hidden');
-                        return;
-                    }
+                        const fullName = document.getElementById('registerName').value;
+                        const email = document.getElementById('registerEmail').value;
+                        const password = document.getElementById('registerPassword').value;
+                        const confirmPassword = document.getElementById('registerConfirmPassword').value;
                     
-                    // Simulate successful registration
-                    hideModal('register');
-                    alert('Registration successful! You can now log in.');
-                    showModal('login');
-                });
+                        if (password !== confirmPassword) {
+                            registerAlert.textContent = 'Passwords do not match.';
+                            registerAlert.classList.remove('hidden');
+                            return;
+                        }
+                    
+                        try {
+                            const response = await fetch('/api/auth/register', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ full_name: fullName, email: email, password: password }),
+                            });
+                        
+                            const result = await response.json();
+                        
+                            if (response.ok) {
+                                hideModal('register');
+                                alert('Registration successful! Please log in.');
+                                showModal('login');
+                            } else {
+                                registerAlert.textContent = `Error: ${result.detail}`;
+                                registerAlert.classList.remove('hidden');
+                            }
+                        } catch (error) {
+                            registerAlert.textContent = 'An unexpected network error occurred.';
+                            registerAlert.classList.remove('hidden');
+                        }
+                    });
+                }
 
                 // Chat functionality
                 function toggleChat() {
