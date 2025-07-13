@@ -566,7 +566,7 @@
                 <section id="dashboard" class="section">
                     <div class="stats-grid">
                         <div class="stat-item">
-                            <span class="stat-number">24</span>
+                            <span class="stat-number" id="createdPromptsCount">24</span>
                             <div class="stat-label">Created Prompts</div>
                         </div>
                         <div class="stat-item">
@@ -901,196 +901,188 @@
         </div>
     </div>
 
-    <script>
-        let currentSection = 'dashboard';
+<script>
+    // --- MODAL AND NAVIGATION FUNCTIONS (WITH BUG FIX) ---
 
-        // Navigation functions
-        function showSection(sectionId) {
-            // Hide all sections
-            document.querySelectorAll('.section').forEach(section => {
-                section.style.display = 'none';
-            });
-            
-            // Show selected section
-            document.getElementById(sectionId).style.display = 'block';
-            
-            // Update active nav item
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            
-            // Set active nav item
-            const targetNav = document.querySelector(`[onclick="showSection('${sectionId}')"]`);
-            if (targetNav) {
-                targetNav.classList.add('active');
-            }
-            
-            currentSection = sectionId;
-        }
-
-        function navigateToTool(toolName) {
-            if (toolName === 'prompt-collection') {
-                window.location.href = 'prompt-collection.html';
-            } else if (toolName === 'writing-assistant') {
-                window.location.href = 'writing-assistant.html';
-            } else if (toolName === 'language-hub') {
-                window.location.href = 'language-hub.html';
-            } else if (toolName === 'lesson-planner') {
-                window.location.href = 'lesson-planner.html';
-            }
-        }
-
-        // Modal functions
-        function showModal(modalType) {
-            const modal = document.getElementById(modalType.replace('-', '') + 'Modal');
+    function showModal(modalType) {
+        // Correctly find the modal ID (e.g., 'create-prompt' -> 'createPromptModal')
+        const modalId = modalType.replace(/-(\w)/g, (match, letter) => letter.toUpperCase()) + 'Modal';
+        const modal = document.getElementById(modalId);
+        
+        if (modal) {
             if (modalType === 'share-gpt') {
-                // For share GPT, use the share content modal but pre-select GPT
                 document.getElementById('shareContentModal').classList.add('show');
                 document.getElementById('contentType').value = 'gpt';
             } else {
                 modal.classList.add('show');
             }
+        } else {
+            console.error(`Modal with ID "${modalId}" not found.`);
         }
+    }
 
-        function hideModal(modalType) {
-            const modal = document.getElementById(modalType.replace('-', '') + 'Modal');
-            modal.classList.remove('show');
+    function hideModal(modalType) {
+        const modalId = modalType.replace(/-(\w)/g, (match, letter) => letter.toUpperCase()) + 'Modal';
+        const modal = document.getElementById(modalId);
+        if(modal) modal.classList.remove('show');
+    }
+
+    // --- PAGE NAVIGATION AND INTERACTIVITY ---
+
+    let currentSection = 'dashboard';
+
+    function showSection(sectionId) {
+        document.querySelectorAll('.section').forEach(section => section.style.display = 'none');
+        document.getElementById(sectionId).style.display = 'block';
+        document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+        const targetNav = document.querySelector(`[onclick="showSection('${sectionId}')"]`);
+        if (targetNav) targetNav.classList.add('active');
+        currentSection = sectionId;
+    }
+
+    function navigateToTool(toolName) {
+        window.location.href = toolName + '.html';
+    }
+    
+    function logout() {
+        if (confirm('Are you sure you want to logout?')) {
+            localStorage.removeItem('accessToken');
+            window.location.href = '/index.html';
         }
+    }
 
-        // Prompt functions
-        function usePrompt(index) {
-            const prompts = [
-                "Act as an experienced English teacher. Help me grade this student essay by providing constructive feedback on [writing style/grammar/content]. Focus on...",
-                "Create a multiple-choice quiz with 10 questions about [subject/topic]. Include answer explanations and difficulty levels appropriate for [grade level]...",
-                "Help me prepare talking points for a parent-teacher conference about [student name]. Include discussion about [academic progress/behavior/recommendations]...",
-                "Generate creative writing prompts for [grade level] students. Include character suggestions, setting ideas, and plot starters that encourage imagination..."
-            ];
-            
-            navigator.clipboard.writeText(prompts[index]).then(() => {
-                alert('Prompt copied to clipboard! You can now paste it into your AI tool of choice.');
+    // --- PROMPT-RELATED FUNCTIONS ---
+
+    async function fetchAndDisplayPrompts() {
+        const token = localStorage.getItem('accessToken');
+        const promptListDiv = document.querySelector('#my-prompts .prompt-list');
+        if (!token || !promptListDiv) return;
+
+        try {
+            const response = await fetch('/api/prompts/', {
+                headers: { 'Authorization': `Bearer ${token}` }
             });
-        }
-
-        function editPrompt(index) {
-            alert('Edit prompt functionality would open an edit form in the full version.');
-        }
-
-        function sharePrompt(index) {
-            alert('This prompt will be shared with the community! Other teachers can now discover and use it.');
-        }
-
-        function viewShared(index) {
-            alert('View shared content details in the full version.');
-        }
-
-        function useCommunityItem(index) {
-            const items = [
-                'https://chat.openai.com/g/g-classroom-management',
-                'Prompt for reading comprehension copied to clipboard!',
-                'IEP Goal Generator prompt copied to clipboard!'
-            ];
+            if (!response.ok) throw new Error('Failed to fetch prompts');
             
-            if (items[index].startsWith('http')) {
-                window.open(items[index], '_blank');
+            const prompts = await response.json();
+            document.getElementById('createdPromptsCount').textContent = prompts.length;
+            promptListDiv.innerHTML = ''; // Clear static content
+
+            if (prompts.length === 0) {
+                promptListDiv.innerHTML = '<p>You haven\'t created any prompts yet. Click "+ New Prompt" to get started!</p>';
             } else {
-                alert(items[index]);
-            }
-        }
-
-        // Form submission handlers
-        document.getElementById('createPromptForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const title = document.getElementById('promptTitle').value;
-            const category = document.getElementById('promptCategory').value;
-            const text = document.getElementById('promptText').value;
-            
-            // Simulate saving prompt
-            alert(`Prompt "${title}" created successfully! It's now available in your personal collection.`);
-            
-            hideModal('create-prompt');
-            
-            // Reset form
-            this.reset();
-        });
-
-        document.getElementById('shareContentForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const title = document.getElementById('contentTitle').value;
-            const type = document.getElementById('contentType').value;
-            
-            // Simulate sharing content
-            alert(`"${title}" has been shared with the community! Other teachers can now discover and use your ${type}.`);
-            
-            hideModal('share-content');
-            
-            // Reset form
-            this.reset();
-        });
-
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                localStorage.removeItem('accessToken'); // Clear the session token
-                window.location.href = '/index.html';    // Redirect to home
-            }
-        }
-
-        // Close modals when clicking outside
-        document.querySelectorAll('.modal').forEach(modal => {
-            modal.addEventListener('click', function(e) {
-                if (e.target === this) {
-                    this.classList.remove('show');
-                }
-            });
-        });
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', async () => {
-            const token = localStorage.getItem('accessToken');
-        
-            // 1. Check if a login token exists
-            if (!token) {
-                // If no token, the user is not logged in. Redirect to login page.
-                window.location.href = '/login.html';
-                return; // Stop the script from running further
-            }
-        
-            // 2. If a token exists, use it to fetch the user's details
-            try {
-                const response = await fetch('/api/auth/users/me', {
-                    method: 'GET',
-                    headers: {
-                        // Send the token in the Authorization header
-                        'Authorization': `Bearer ${token}` 
-                    }
+                prompts.forEach(prompt => {
+                    const promptElement = document.createElement('div');
+                    promptElement.className = 'prompt-item';
+                    promptElement.innerHTML = `
+                        <div class="prompt-title">
+                            <span>📝 ${prompt.title}</span>
+                            <span class="tag">${prompt.category}</span>
+                        </div>
+                        <div class="prompt-text">${prompt.text}</div>
+                        <div class="prompt-actions">
+                            <button class="btn btn-small btn-primary" onclick="usePrompt('${prompt.text}')">Use</button>
+                            <button class="btn btn-small btn-secondary" onclick="editPrompt(${prompt.id})">Edit</button>
+                        </div>
+                    `;
+                    promptListDiv.appendChild(promptElement);
                 });
-            
-                if (response.ok) {
-                    // If the token is valid, the server will return the user's data
-                    const user = await response.json();
-                
-                    // 3. Update the page with the user's real data
-                    document.getElementById('userFullName').textContent = user.full_name;
-                    document.getElementById('userEmail').textContent = user.email;
-                    // Use the first name for a friendly welcome
-                    document.getElementById('welcomeHeader').textContent = `Welcome back, ${user.full_name.split(' ')[0]}! 👋`;
-                
-                    console.log('Teacher Dashboard loaded and personalized successfully!');
-                
-                } else {
-                    // If the token is invalid or expired, the server will send an error
-                    console.error('Authentication failed. Redirecting to login.');
-                    localStorage.removeItem('accessToken'); // Clear the bad token
-                    window.location.href = '/login.html';
-                }
-            } catch (error) {
-                console.error('Failed to fetch user data:', error);
-                // If the server can't be reached, also redirect to login
-                localStorage.removeItem('accessToken');
-                window.location.href = '/login.html';
             }
+        } catch (error) {
+            console.error('Error fetching prompts:', error);
+            promptListDiv.innerHTML = '<p style="color: red;">An error occurred while loading prompts.</p>';
+        }
+    }
+
+    function usePrompt(promptText) {
+        navigator.clipboard.writeText(promptText).then(() => {
+            alert('Prompt copied to clipboard!');
         });
-    </script>
+    }
+
+    function editPrompt(promptId) {
+        alert(`Edit functionality for prompt ID ${promptId} will be implemented later.`);
+    }
+
+    // --- PAGE INITIALIZATION AND AUTHENTICATION ---
+    
+    document.addEventListener('DOMContentLoaded', async () => {
+        const token = localStorage.getItem('accessToken');
+        if (!token) {
+            window.location.href = '/login.html';
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/auth/users/me', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!response.ok) throw new Error('Authentication failed');
+
+            const user = await response.json();
+            
+            // Personalize page
+            document.getElementById('userFullName').textContent = user.full_name;
+            document.getElementById('userEmail').textContent = user.email;
+            document.getElementById('welcomeHeader').textContent = `Welcome back, ${user.full_name.split(' ')[0]}! 👋`;
+            
+            // Fetch user-specific content
+            fetchAndDisplayPrompts();
+
+        } catch (error) {
+            console.error('Initialization failed:', error);
+            localStorage.removeItem('accessToken');
+            window.location.href = '/login.html';
+        }
+    });
+
+    // --- FORM SUBMISSION HANDLERS ---
+
+    document.getElementById('createPromptForm')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const token = localStorage.getItem('accessToken');
+        const title = document.getElementById('promptTitle').value;
+        const category = document.getElementById('promptCategory').value;
+        const text = document.getElementById('promptText').value;
+
+        try {
+            const response = await fetch('/api/prompts/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ title, text, category })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail || 'Failed to create prompt.');
+            }
+            
+            alert('Prompt created successfully!');
+            hideModal('create-prompt');
+            e.target.reset();
+            fetchAndDisplayPrompts(); // Refresh the list
+
+        } catch (error) {
+            alert(`Error: ${error.message}`);
+        }
+    });
+
+    document.getElementById('shareContentForm')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        alert('Sharing functionality will be implemented later.');
+        hideModal('share-content');
+        e.target.reset();
+    });
+
+    // Close modals when clicking outside
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', function(e) {
+            if (e.target === this) this.classList.remove('show');
+        });
+    });
+</script>
 </body>
 </html>

@@ -33,3 +33,19 @@ class Token(BaseModel):
 # Schema for data embedded in the token
 class TokenData(BaseModel):
     email: EmailStr | None = None
+
+# Schema for creating a new prompt (request)
+class PromptBase(BaseModel):
+    title: str
+    text: str
+    category: str | None = None
+
+class PromptCreate(PromptBase):
+    pass
+
+class Prompt(PromptBase):
+    id: int
+    owner_id: int
+
+    class Config:
+        from_attributes = True # This is important for SQLAlchemy models

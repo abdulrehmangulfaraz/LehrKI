@@ -17,3 +17,15 @@ def create_user(db: Session, user: schemas.UserCreate):
     db.commit()
     db.refresh(db_user)
     return db_user
+
+def get_prompts_by_user(db: Session, user_id: int, skip: int = 0, limit: int = 100):
+    """Fetch all prompts owned by a specific user."""
+    return db.query(models.Prompt).filter(models.Prompt.owner_id == user_id).offset(skip).limit(limit).all()
+
+def create_user_prompt(db: Session, prompt: schemas.PromptCreate, user_id: int):
+    """Create a new prompt for a user."""
+    db_prompt = models.Prompt(**prompt.model_dump(), owner_id=user_id)
+    db.add(db_prompt)
+    db.commit()
+    db.refresh(db_prompt)
+    return db_prompt
