@@ -488,6 +488,14 @@
                 padding: 20px;
             }
         }
+        /* ADD THIS NEW CSS RULE */
+        .profile-data-field {
+            font-size: 16px;
+            color: #333;
+            padding: 12px 0;
+            border-bottom: 2px solid #f0f2f5;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
@@ -819,6 +827,54 @@
                         </div>
                     </div>
                 </section>
+
+                <section id="settings" class="section" style="display: none;">
+                    <h2 style="color: white; margin-bottom: 30px; text-align: center;">⚙️ Account Settings</h2>
+                                
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <div class="card-icon">👤</div>
+                                <div class="card-title">Profile Details</div>
+                            </div>
+                            <div class="card-content">
+                                <div class="form-group">
+                                    <label>Full Name</label>
+                                    <div id="settingsFullName" class="profile-data-field"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Email Address</label>
+                                    <div id="settingsEmail" class="profile-data-field"></div>
+                                </div>
+                            </div>
+                        </div>
+                    
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <div class="card-icon">🔒</div>
+                                <div class="card-title">Change Password</div>
+                            </div>
+                            <div class="card-content">
+                                <form id="updatePasswordForm">
+                                    <div class="form-group">
+                                        <label for="currentPassword">Current Password</label>
+                                        <input type="password" id="currentPassword" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="newPassword">New Password</label>
+                                        <input type="password" id="newPassword" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="confirmNewPassword">Confirm New Password</label>
+                                        <input type="password" id="confirmNewPassword" required>
+                                    </div>
+                                    <div id="passwordAlert" style="margin-top: 15px;"></div>
+                                    <button type="submit" class="btn btn-primary" style="width: 100%;">Update Password</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
         </main>
     </div>
@@ -944,6 +1000,54 @@
             </form>
         </div>
     </div>
+
+    <section id="settings" class="section" style="display: none;">
+    <h2 style="color: white; margin-bottom: 30px; text-align: center;">⚙️ Account Settings</h2>
+    
+    <div class="dashboard-grid">
+        <div class="dashboard-card">
+            <div class="card-header">
+                <div class="card-icon">👤</div>
+                <div class="card-title">Profile Details</div>
+            </div>
+            <div class="card-content">
+                <form id="updateProfileForm">
+                    <div class="form-group">
+                        <label for="profileFullName">Full Name</label>
+                        <input type="text" id="profileFullName" required>
+                    </div>
+                    <div id="profileAlert" style="margin-top: 15px;"></div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Save Changes</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="dashboard-card">
+            <div class="card-header">
+                <div class="card-icon">🔒</div>
+                <div class="card-title">Change Password</div>
+            </div>
+            <div class="card-content">
+                <form id="updatePasswordForm">
+                    <div class="form-group">
+                        <label for="currentPassword">Current Password</label>
+                        <input type="password" id="currentPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">New Password</label>
+                        <input type="password" id="newPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmNewPassword">Confirm New Password</label>
+                        <input type="password" id="confirmNewPassword" required>
+                    </div>
+                    <div id="passwordAlert" style="margin-top: 15px;"></div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Update Password</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
 
 <script>
     // --- MODAL AND NAVIGATION FUNCTIONS (WITH BUG FIX) ---
@@ -1173,6 +1277,73 @@
 
 // ADD THIS NEW BLOCK
 
+document.getElementById('updateProfileForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem('accessToken');
+    const fullName = document.getElementById('profileFullName').value;
+    const alertDiv = document.getElementById('profileAlert');
+
+    try {
+        const response = await fetch('/api/users/me', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ full_name: fullName })
+        });
+
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.detail || 'Failed to update profile.');
+
+        // Update the name in the sidebar as well
+        document.getElementById('userFullName').textContent = result.full_name;
+        document.getElementById('welcomeHeader').textContent = `Welcome back, ${result.full_name.split(' ')[0]}! 👋`;
+        document.getElementById('profileFullName').value = user.full_name;
+        
+        alertDiv.innerHTML = '<p style="color: green;">Profile updated successfully!</p>';
+    } catch (error) {
+        alertDiv.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+    }
+});
+
+// Handler for the Update Password Form
+document.getElementById('updatePasswordForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem('accessToken');
+    const currentPassword = document.getElementById('currentPassword').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+    const alertDiv = document.getElementById('passwordAlert');
+
+    if (newPassword !== confirmNewPassword) {
+        alertDiv.innerHTML = '<p style="color: red;">New passwords do not match.</p>';
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/users/me/password', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ 
+                current_password: currentPassword, 
+                new_password: newPassword 
+            })
+        });
+
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.detail || 'Failed to update password.');
+
+        alertDiv.innerHTML = '<p style="color: green;">Password updated successfully!</p>';
+        e.target.reset(); // Clear the form fields on success
+    } catch (error) {
+        alertDiv.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+    }
+});
+
 document.getElementById('editPromptForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('accessToken');
@@ -1229,7 +1400,11 @@ document.getElementById('editPromptForm')?.addEventListener('submit', async (e) 
             document.getElementById('userFullName').textContent = user.full_name;
             document.getElementById('userEmail').textContent = user.email;
             document.getElementById('welcomeHeader').textContent = `Welcome back, ${user.full_name.split(' ')[0]}! 👋`;
-            
+
+            // Populate the read-only settings fields
+            document.getElementById('settingsFullName').textContent = user.full_name;
+            document.getElementById('settingsEmail').textContent = user.email;
+
             // Fetch user-specific content
             fetchAndDisplayPrompts();
             fetchAndDisplaySharedItems(); // ADD THIS LINE if it's missing

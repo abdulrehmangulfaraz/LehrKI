@@ -70,3 +70,12 @@ class SharedItem(SharedItemBase):
 
     class Config:
         from_attributes = True
+
+# Schema for updating user information
+class UserUpdate(BaseModel):
+    full_name: str | None = None
+
+class PasswordUpdate(BaseModel):
+    current_password: str
+    new_password: str
+

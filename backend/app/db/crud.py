@@ -1,5 +1,6 @@
 # backend/app/db/crud.py
 
+from getpass import getuser
 from sqlalchemy.orm import Session
 from . import models
 from .. import schemas
@@ -72,3 +73,21 @@ def get_shared_items_by_user(db: Session, user_id: int, skip: int = 0, limit: in
 def get_all_shared_items(db: Session, skip: int = 0, limit: int = 100):
     """Fetch all shared items from all users for the public collection."""
     return db.query(models.SharedItem).order_by(models.SharedItem.id.desc()).offset(skip).limit(limit).all()
+
+# Add these two new functions at the end of crud.py
+
+def update_user_details(db: Session, user_id: int, user_update: schemas.UserUpdate):
+    """Update a user's full name."""
+    db_user = getuser(db, user_id=user_id)
+    if db_user and user_update.full_name:
+        db_user.full_name = user_update.full_name
+        db.commit()
+        db.refresh(db_user)
+    return db_user
+
+def update_user_password(db: Session, user: models.User, new_password: str):
+    """Update a user's password."""
+    user.hashed_password = get_password_hash(new_password)
+    db.commit()
+    db.refresh(user)
+    return user

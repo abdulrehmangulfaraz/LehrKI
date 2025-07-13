@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-from .api.endpoints import auth, prompts, shared_items  # Import the new auth router
+from .api.endpoints import auth, prompts, shared_items, users  # Import the new auth router
 
 # Create the FastAPI app instance
 app = FastAPI(title="AI Teacher Toolkit API")
@@ -32,10 +32,8 @@ def read_health_check():
 # Note: For production, you might serve this with a web server like Nginx instead.
 
 app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
-
-
 app.include_router(prompts.router, prefix="/api/prompts", tags=["Prompts"])
-
 app.include_router(shared_items.router, prefix="/api/shared-items", tags=["Shared Items"])
+app.include_router(users.router, prefix="/api/users", tags=["Users"])
 
 app.mount("/", StaticFiles(directory="frontend", html=True), name="static")
