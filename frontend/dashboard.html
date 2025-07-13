@@ -858,6 +858,44 @@
         </div>
     </div>
 
+    <div id="editPromptModal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="hideModal('edit-prompt')">&times;</button>
+            <div class="modal-header">
+                <h2>Edit Prompt</h2>
+                <p>Refine your prompt to make it even better.</p>
+            </div>
+            <form id="editPromptForm">
+                <input type="hidden" id="editPromptId">
+
+                <div class="form-group">
+                    <label for="editPromptTitle">Prompt Title</label>
+                    <input type="text" id="editPromptTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="editPromptCategory">Category</label>
+                    <select id="editPromptCategory" required>
+                        <option value="">Select Category</option>
+                        <option value="academic">Academic</option>
+                        <option value="assessment">Assessment</option>
+                        <option value="communication">Communication</option>
+                        <option value="creative">Creative</option>
+                        <option value="planning">Planning</option>
+                        <option value="management">Classroom Management</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editPromptText">Prompt Text</label>
+                    <textarea id="editPromptText" required></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="hideModal('edit-prompt')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Share Content Modal -->
     <div id="shareContentModal" class="modal">
         <div class="modal-content">
@@ -1000,9 +1038,68 @@
         });
     }
 
-    function editPrompt(promptId) {
-        alert(`Edit functionality for prompt ID ${promptId} will be implemented later.`);
+    async function editPrompt(promptId) {
+        const token = localStorage.getItem('accessToken');
+        try {
+            // Fetch the specific prompt's data from the backend
+            const response = await fetch(`/api/prompts/${promptId}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!response.ok) throw new Error('Failed to fetch prompt details.');
+
+            const prompt = await response.json();
+
+            // Populate the edit form with the fetched data
+            document.getElementById('editPromptId').value = prompt.id;
+            document.getElementById('editPromptTitle').value = prompt.title;
+            document.getElementById('editPromptCategory').value = prompt.category;
+            document.getElementById('editPromptText').value = prompt.text;
+
+            // Show the edit modal
+            showModal('edit-prompt');
+
+        } catch (error) {
+            alert(`Error: ${error.message}`);
+        }
     }
+
+    // --- FORM SUBMISSION HANDLERS ---
+
+// ADD THIS NEW BLOCK
+document.getElementById('editPromptForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem('accessToken');
+    const promptId = document.getElementById('editPromptId').value;
+    const title = document.getElementById('editPromptTitle').value;
+    const category = document.getElementById('editPromptCategory').value;
+    const text = document.getElementById('editPromptText').value;
+
+    try {
+        const response = await fetch(`/api/prompts/${promptId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ title, text, category })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.detail || 'Failed to update prompt.');
+        }
+
+        alert('Prompt updated successfully!');
+        hideModal('edit-prompt');
+        fetchAndDisplayPrompts(); // Refresh the list to show the changes
+
+    } catch (error) {
+        alert(`Error: ${error.message}`);
+    }
+});
+
+// The handler for createPromptForm should already be here
+// ...
 
     // --- PAGE INITIALIZATION AND AUTHENTICATION ---
     

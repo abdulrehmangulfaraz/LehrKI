@@ -1,6 +1,6 @@
 # backend/app/api/endpoints/prompts.py
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 
@@ -35,8 +35,6 @@ def read_prompts(
     prompts = crud.get_prompts_by_user(db, user_id=current_user.id, skip=skip, limit=limit)
     return prompts
 
-# Add this new function in prompts.py
-
 @router.get("/public", response_model=List[schemas.PromptPublic])
 def read_public_prompts(
     skip: int = 0,
@@ -48,3 +46,34 @@ def read_public_prompts(
     """
     prompts = crud.get_all_prompts(db, skip=skip, limit=limit)
     return prompts
+
+@router.get("/{prompt_id}", response_model=schemas.Prompt)
+def read_single_prompt(
+    prompt_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    """
+    Retrieve a single prompt by its ID.
+    Ensures the prompt belongs to the current user.
+    """
+    db_prompt = crud.get_prompt(db, prompt_id=prompt_id)
+    if db_prompt is None or db_prompt.owner_id != current_user.id:
+        raise HTTPException(status_code=404, detail="Prompt not found")
+    return db_prompt
+
+@router.put("/{prompt_id}", response_model=schemas.Prompt)
+def update_single_prompt(
+    prompt_id: int,
+    prompt: schemas.PromptCreate,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    """
+    Update a prompt owned by the current user.
+    """
+    db_prompt = crud.get_prompt(db, prompt_id=prompt_id)
+    if db_prompt is None or db_prompt.owner_id != current_user.id:
+        raise HTTPException(status_code=404, detail="Prompt not found")
+
+    return crud.update_prompt(db=db, prompt_id=prompt_id, prompt_data=prompt)
