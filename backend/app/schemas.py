@@ -47,5 +47,8 @@ class Prompt(PromptBase):
     id: int
     owner_id: int
 
-    class Config:
+class Config:
         from_attributes = True # This is important for SQLAlchemy models
+
+class PromptPublic(Prompt):
+    owner: User

@@ -512,7 +512,7 @@
         <!-- Featured Prompts Section -->
         <div class="featured-section">
             <h2 class="featured-title">⭐ Featured Prompts</h2>
-            <div class="featured-grid">
+            <div class="featured-grid" id="featuredPromptsGrid">
                 <div class="prompt-card" style="border: 2px solid #ffd700;">
                     <div class="prompt-header">
                         <div>
@@ -859,227 +859,170 @@
         </div>
     </div>
 
-    <script>
-        let currentFilter = 'all';
-        let currentSort = 'popular';
-        let prompts = {
-            'featured-1': {
-                title: 'Universal Lesson Planner',
-                author: 'Sarah Martinez',
-                description: 'Create comprehensive lesson plans for any subject and grade level with learning objectives, activities, and assessments.',
-                text: `Create a detailed lesson plan for [SUBJECT] at [GRADE LEVEL] on the topic of [TOPIC].
+<script>
+    let allPrompts = []; // This will store all prompts fetched from the server
 
-Structure the lesson plan with:
-
-1. LEARNING OBJECTIVES (aligned with standards)
-   - What students will know
-   - What students will be able to do
-   - Essential questions
-
-2. MATERIALS & RESOURCES
-   - Required materials
-   - Technology needs
-   - Handouts/worksheets
-
-3. LESSON STRUCTURE (45-minute class)
-   - Opening/Hook (5 min)
-   - Direct instruction (15 min)
-   - Guided practice (15 min)
-   - Independent practice (8 min)
-   - Closure (2 min)
-
-4. DIFFERENTIATION STRATEGIES
-   - For advanced learners
-   - For struggling learners
-   - For ELL students
-
-5. ASSESSMENT
-   - Formative assessment methods
-   - Exit ticket ideas
-   - Homework/follow-up
-
-Make it engaging and age-appropriate with clear instructions for each activity.`
-            },
-            'featured-2': {
-                title: 'Differentiated Assessment Creator',
-                author: 'Michael Chen',
-                description: 'Generate assessments adapted to different learning styles and ability levels while maintaining academic standards.',
-                text: `Create a differentiated assessment for [SUBJECT] topic: [TOPIC] for [GRADE LEVEL].
-
-Provide THREE versions:
-
-VERSION A (Advanced/Accelerated):
-- Higher-order thinking questions
-- Analysis and synthesis tasks
-- Creative application problems
-- Extended response opportunities
-
-VERSION B (On-Grade Level):
-- Standard curriculum expectations
-- Mix of recall and application
-- Clear scaffolding provided
-- Multiple question formats
-
-VERSION C (Modified/Support):
-- Simplified language
-- Visual supports included
-- Chunked into smaller parts
-- Word bank/multiple choice options
-
-For each version include:
-- 5-7 questions/tasks
-- Point values
-- Success criteria
-- Accommodations notes
-
-Ensure all versions assess the same core concepts while providing appropriate challenge levels.`
+    // --- INITIALIZATION ---
+    // This function runs automatically when the page has finished loading
+    document.addEventListener('DOMContentLoaded', async () => {
+        try {
+            // Fetch all public prompts from our new backend endpoint
+            const response = await fetch('/api/prompts/public');
+            if (!response.ok) {
+                throw new Error('Failed to load prompts from the server.');
             }
-        };
-
-        // Filter and search functions
-        function filterByCategory(element, category) {
-            currentFilter = category;
-            
-            // Update active filter tag
-            document.querySelectorAll('.filter-tag').forEach(tag => {
-                tag.classList.remove('active');
-            });
-            element.classList.add('active');
-            
-            // Filter prompt cards
-            const cards = document.querySelectorAll('.prompt-card');
-            cards.forEach(card => {
-                if (category === 'all' || card.dataset.category === category) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        }
-
-        function filterPrompts() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const cards = document.querySelectorAll('.prompt-card');
-            
-            cards.forEach(card => {
-                const title = card.querySelector('.prompt-title').textContent.toLowerCase();
-                const description = card.querySelector('.prompt-description').textContent.toLowerCase();
-                const author = card.querySelector('.prompt-author').textContent.toLowerCase();
-                
-                const matches = title.includes(searchTerm) || 
-                               description.includes(searchTerm) || 
-                               author.includes(searchTerm);
-                
-                const categoryMatch = currentFilter === 'all' || card.dataset.category === currentFilter;
-                
-                card.style.display = (matches && categoryMatch) ? 'block' : 'none';
-            });
-        }
-
-        function sortPrompts(sortBy) {
-            currentSort = sortBy;
-            // In a real application, this would re-order the cards
-            console.log('Sorting by:', sortBy);
-        }
-
-        // Prompt interaction functions
-        function viewPrompt(promptId) {
-            const prompt = prompts[promptId];
-            if (prompt) {
-                document.getElementById('modalTitle').textContent = prompt.title;
-                document.getElementById('modalAuthor').textContent = `By ${prompt.author}`;
-                document.getElementById('modalDescription').textContent = prompt.description;
-                document.getElementById('modalPromptText').textContent = prompt.text;
-                document.getElementById('promptModal').classList.add('show');
-            } else {
-                alert('Full prompt content would be displayed here in the complete version.');
-            }
-        }
-
-        function copyPrompt(promptId) {
-            const prompt = prompts[promptId];
-            if (prompt) {
-                navigator.clipboard.writeText(prompt.text).then(() => {
-                    showCopySuccess();
-                });
-            } else {
-                // Fallback for prompts without full content
-                navigator.clipboard.writeText('Sample prompt text copied to clipboard!').then(() => {
-                    showCopySuccess();
-                });
-            }
-        }
-
-        function copyModalPrompt() {
-            const promptText = document.getElementById('modalPromptText').textContent;
-            navigator.clipboard.writeText(promptText).then(() => {
-                document.getElementById('copySuccess').style.display = 'block';
-                setTimeout(() => {
-                    document.getElementById('copySuccess').style.display = 'none';
-                }, 3000);
-            });
-        }
-
-        function showCopySuccess() {
-            // Create temporary success message
-            const successMsg = document.createElement('div');
-            successMsg.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: #28a745;
-                color: white;
-                padding: 15px 20px;
-                border-radius: 10px;
-                z-index: 3000;
-                font-weight: bold;
-                box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            `;
-            successMsg.textContent = '✅ Prompt copied to clipboard!';
-            document.body.appendChild(successMsg);
-            
-            setTimeout(() => {
-                successMsg.remove();
-            }, 3000);
-        }
-
-        function toggleLike(button) {
-            button.classList.toggle('liked');
-            const countSpan = button.querySelector('span:last-child');
-            let count = parseInt(countSpan.textContent);
-            
-            if (button.classList.contains('liked')) {
-                count++;
-                button.style.background = '#667eea';
-                button.style.color = 'white';
-            } else {
-                count--;
-                button.style.background = 'none';
-                button.style.color = '#667eea';
-            }
-            
-            countSpan.textContent = count;
-        }
-
-        function hidePromptModal() {
-            document.getElementById('promptModal').classList.remove('show');
-        }
-
-        function showContributeModal() {
-            alert('Contribution form would open here! Teachers could submit their own prompts to share with the community.');
-        }
-
-        // Close modal when clicking outside
-        document.getElementById('promptModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                hidePromptModal();
-            }
-        });
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
+            allPrompts = await response.json();
+            displayPrompts(allPrompts); // Display the fetched prompts
             console.log('Prompt Collection loaded successfully!');
+        } catch (error) {
+            console.error(error);
+            const grid = document.getElementById('promptsGrid');
+            grid.innerHTML = '<p style="color:red; text-align:center;">Could not load prompts. Please try again later.</p>';
+        }
+    });
+
+    // --- DISPLAY AND FILTERING ---
+    // REPLACE your old displayPrompts function with this one
+
+    function displayPrompts(promptsToDisplay) {
+        const featuredGrid = document.getElementById('featuredPromptsGrid');
+        const mainGrid = document.getElementById('promptsGrid');
+    
+        // Clear both sections to start fresh
+        featuredGrid.innerHTML = '';
+        mainGrid.innerHTML = '';
+    
+        if (promptsToDisplay.length === 0) {
+            mainGrid.innerHTML = '<p style="text-align:center; color: white;">No prompts found matching your criteria.</p>';
+            return;
+        }
+    
+        // --- 1. Populate the Featured Prompts Section ---
+        // We'll take the first two prompts from the list to feature them
+        const featuredPrompts = promptsToDisplay.slice(0, 2);
+        
+        featuredPrompts.forEach(prompt => {
+            const card = document.createElement('div');
+            card.className = 'prompt-card';
+            card.style.border = '2px solid #ffd700'; // Keep the featured styling
+            card.innerHTML = `
+                <div class="prompt-header">
+                    <div>
+                        <div class="prompt-title">${prompt.title}</div>
+                        <div class="prompt-meta">
+                            <span class="prompt-author">By ${prompt.owner.full_name}</span>
+                            <span class="tag tag-${prompt.category.toLowerCase()}">${prompt.category}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="prompt-description">${prompt.text.substring(0, 100)}...</div>
+                <div class="prompt-full-text" style="display:none;">${prompt.text}</div>
+                <div class="prompt-actions">
+                    <button class="btn btn-primary" onclick="viewPrompt(this)">View Full</button>
+                    <button class="btn btn-secondary" onclick="copyPrompt(this)">Copy</button>
+                </div>
+            `;
+            featuredGrid.appendChild(card);
         });
-    </script>
+    
+        // --- 2. Populate the Main Community Prompts Grid ---
+        // We display ALL prompts in the main grid, including the featured ones
+        promptsToDisplay.forEach(prompt => {
+            const card = document.createElement('div');
+            card.className = 'prompt-card';
+            card.dataset.category = prompt.category.toLowerCase();
+            card.innerHTML = `
+                <div class="prompt-header">
+                    <div>
+                        <div class="prompt-title">${prompt.title}</div>
+                        <div class="prompt-meta">
+                            <span class="prompt-author">By ${prompt.owner.full_name}</span>
+                            <span class="tag tag-${prompt.category.toLowerCase()}">${prompt.category}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="prompt-description">${prompt.text.substring(0, 120)}...</div>
+                <div class="prompt-full-text" style="display:none;">${prompt.text}</div>
+                <div class="prompt-actions">
+                    <button class="btn btn-primary" onclick="viewPrompt(this)">View Full</button>
+                    <button class="btn btn-secondary" onclick="copyPrompt(this)">Copy</button>
+                </div>
+            `;
+            mainGrid.appendChild(card);
+        });
+    }
+    
+
+    function filterPrompts() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const activeCategory = document.querySelector('.filter-tag.active').dataset.category;
+
+        const filtered = allPrompts.filter(prompt => {
+            const matchesSearch = prompt.title.toLowerCase().includes(searchTerm) || 
+                                  prompt.owner.full_name.toLowerCase().includes(searchTerm);
+            const matchesCategory = activeCategory === 'all' || prompt.category.toLowerCase() === activeCategory;
+            return matchesSearch && matchesCategory;
+        });
+        
+        displayPrompts(filtered);
+    }
+    
+    function filterByCategory(element, category) {
+        document.querySelectorAll('.filter-tag').forEach(tag => tag.classList.remove('active'));
+        element.classList.add('active');
+        element.dataset.category = category; // Set data-category for the active filter
+        filterPrompts(); // Re-run the filter
+    }
+
+    // --- MODAL AND ACTIONS ---
+
+    function viewPrompt(button) {
+        const card = button.closest('.prompt-card');
+        const title = card.querySelector('.prompt-title').textContent;
+        const author = card.querySelector('.prompt-author').textContent;
+        const fullText = card.querySelector('.prompt-full-text').textContent;
+        
+        document.getElementById('modalTitle').textContent = title;
+        document.getElementById('modalAuthor').textContent = author;
+        document.getElementById('modalPromptText').textContent = fullText;
+        document.getElementById('promptModal').classList.add('show');
+    }
+
+    function copyPrompt(button) {
+        const card = button.closest('.prompt-card');
+        const fullText = card.querySelector('.prompt-full-text').textContent;
+        navigator.clipboard.writeText(fullText).then(() => showCopySuccess());
+    }
+    
+    function copyModalPrompt() {
+        const promptText = document.getElementById('modalPromptText').textContent;
+        navigator.clipboard.writeText(promptText).then(() => {
+            document.getElementById('copySuccess').style.display = 'block';
+            setTimeout(() => { document.getElementById('copySuccess').style.display = 'none'; }, 2000);
+        });
+    }
+
+    function hidePromptModal() {
+        document.getElementById('promptModal').classList.remove('show');
+    }
+
+    function showContributeModal() {
+        // Redirect to dashboard where a logged-in user can create prompts
+        window.location.href = '/dashboard.html';
+    }
+
+    function showCopySuccess() {
+        const successMsg = document.createElement('div');
+        successMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #28a745; color: white; padding: 15px 20px; border-radius: 8px; z-index: 9999; box-shadow: 0 5px 15px rgba(0,0,0,0.3);';
+        successMsg.textContent = '✅ Prompt copied to clipboard!';
+        document.body.appendChild(successMsg);
+        setTimeout(() => successMsg.remove(), 3000);
+    }
+
+    // Dummy functions for now
+    function toggleLike(button) { alert('Like functionality will be implemented in a future step.'); }
+    function sortPrompts(sortBy) { console.log('Sorting by:', sortBy); }
+
+</script>
 </body>
 </html>

@@ -29,3 +29,9 @@ def create_user_prompt(db: Session, prompt: schemas.PromptCreate, user_id: int):
     db.commit()
     db.refresh(db_prompt)
     return db_prompt
+
+# Add this new function at the end of crud.py
+
+def get_all_prompts(db: Session, skip: int = 0, limit: int = 100):
+    """Fetch all prompts from all users for the public collection."""
+    return db.query(models.Prompt).order_by(models.Prompt.id.desc()).offset(skip).limit(limit).all()

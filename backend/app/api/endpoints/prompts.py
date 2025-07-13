@@ -34,3 +34,17 @@ def read_prompts(
     """
     prompts = crud.get_prompts_by_user(db, user_id=current_user.id, skip=skip, limit=limit)
     return prompts
+
+# Add this new function in prompts.py
+
+@router.get("/public", response_model=List[schemas.PromptPublic])
+def read_public_prompts(
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db)
+):
+    """
+    Retrieve all prompts from all users for the public collection.
+    """
+    prompts = crud.get_all_prompts(db, skip=skip, limit=limit)
+    return prompts
