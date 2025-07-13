@@ -30,13 +30,9 @@ def create_user_prompt(db: Session, prompt: schemas.PromptCreate, user_id: int):
     db.refresh(db_prompt)
     return db_prompt
 
-# Add this new function at the end of crud.py
-
 def get_all_prompts(db: Session, skip: int = 0, limit: int = 100):
     """Fetch all prompts from all users for the public collection."""
     return db.query(models.Prompt).order_by(models.Prompt.id.desc()).offset(skip).limit(limit).all()
-
-# Add these two new functions at the end of crud.py
 
 def get_prompt(db: Session, prompt_id: int):
     """Fetch a single prompt by its ID."""
@@ -51,4 +47,12 @@ def update_prompt(db: Session, prompt_id: int, prompt_data: schemas.PromptCreate
         db_prompt.category = prompt_data.category
         db.commit()
         db.refresh(db_prompt)
+    return db_prompt
+
+def delete_prompt(db: Session, prompt_id: int):
+    """Delete a prompt from the database."""
+    db_prompt = db.query(models.Prompt).filter(models.Prompt.id == prompt_id).first()
+    if db_prompt:
+        db.delete(db_prompt)
+        db.commit()
     return db_prompt

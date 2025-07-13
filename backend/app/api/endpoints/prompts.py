@@ -77,3 +77,19 @@ def update_single_prompt(
         raise HTTPException(status_code=404, detail="Prompt not found")
 
     return crud.update_prompt(db=db, prompt_id=prompt_id, prompt_data=prompt)
+
+@router.delete("/{prompt_id}", response_model=schemas.Prompt)
+def delete_user_prompt(
+    prompt_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    """
+    Delete a prompt owned by the current user.
+    """
+    db_prompt = crud.get_prompt(db, prompt_id=prompt_id)
+    if db_prompt is None or db_prompt.owner_id != current_user.id:
+        raise HTTPException(status_code=404, detail="Prompt not found")
+
+    crud.delete_prompt(db=db, prompt_id=prompt_id)
+    return db_prompt

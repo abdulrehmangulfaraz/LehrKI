@@ -166,6 +166,12 @@
             border: 2px solid #667eea;
         }
 
+        .btn-danger {
+            background: #e53e3e;
+            color: white;
+            border: 2px solid #e53e3e;
+        }
+
         .btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
@@ -1021,6 +1027,7 @@
                         <div class="prompt-actions">
                             <button class="btn btn-small btn-primary" onclick="usePrompt('${prompt.text}')">Use</button>
                             <button class="btn btn-small btn-secondary" onclick="editPrompt(${prompt.id})">Edit</button>
+                            <button class="btn btn-small btn-danger" onclick="deletePrompt(${prompt.id})">Delete</button>
                         </div>
                     `;
                     promptListDiv.appendChild(promptElement);
@@ -1060,6 +1067,34 @@
 
         } catch (error) {
             alert(`Error: ${error.message}`);
+        }
+    }
+
+    async function deletePrompt(promptId) {
+        // Ask for confirmation before deleting
+        if (!confirm('Are you sure you want to permanently delete this prompt?')) {
+            return;
+        }
+    
+        const token = localStorage.getItem('accessToken');
+        try {
+            const response = await fetch(`/api/prompts/${promptId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+        
+            if (!response.ok) {
+                throw new Error('Failed to delete the prompt.');
+            }
+        
+            alert('Prompt deleted successfully!');
+            fetchAndDisplayPrompts(); // Refresh the dashboard to show the prompt is gone
+        
+        } catch (error) {
+            alert(`Error: ${error.message}`);
+            console.error('Error deleting prompt:', error);
         }
     }
 
