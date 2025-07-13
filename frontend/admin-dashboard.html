@@ -1985,7 +1985,7 @@
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="userManagementTableBody">
                                     <tr>
                                         <td>
                                             <div class="table-user">
@@ -2972,8 +2972,106 @@
 
         // Periodic tasks
         setInterval(checkForUpdates, 3600000); // Check for updates hourly
-
+    
         console.log('Admin Dashboard initialized successfully!');
+    </script>
+
+    <script>
+        // --- AUTHENTICATION AND DATA FETCHING ---
+
+        // This function runs automatically when the page loads
+        document.addEventListener('DOMContentLoaded', async () => {
+            const token = localStorage.getItem('accessToken');
+
+            // 1. Check if the user is logged in at all
+            if (!token) {
+                window.location.href = '/login.html'; // Redirect if no token
+                return;
+            }
+
+            // 2. Fetch the current user's data to verify their role
+            try {
+                const userResponse = await fetch('/api/auth/users/me', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!userResponse.ok) throw new Error('Authentication failed.');
+
+                const user = await userResponse.json();
+
+                // 3. Check if the user is an admin
+                if (user.role !== 'admin') {
+                    alert('Access denied. You must be an admin to view this page.');
+                    window.location.href = '/dashboard.html'; // Redirect non-admins
+                    return;
+                }
+
+                // 4. If the user is an admin, fetch the list of all users
+                fetchAllUsers(token);
+
+            } catch (error) {
+                console.error('Error during page load:', error);
+                localStorage.removeItem('accessToken');
+                window.location.href = '/login.html';
+            }
+        });
+
+        async function fetchAllUsers(token) {
+            const tableBody = document.getElementById('userManagementTableBody');
+            try {
+                const response = await fetch('/api/admin/users', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to fetch user list.');
+
+                const users = await response.json();
+
+                // Clear the static placeholder rows
+                tableBody.innerHTML = '';
+
+                // 5. Dynamically create a table row for each user
+                users.forEach(user => {
+                    const row = document.createElement('tr');
+                    const statusClass = user.is_active ? 'status-active' : 'status-inactive';
+
+                    row.innerHTML = `
+                        <td>${user.id}</td>
+                        <td>${user.full_name}</td>
+                        <td>${user.email}</td>
+                        <td>${user.role}</td>
+                        <td><span class="status ${statusClass}">${user.is_active ? 'Active' : 'Inactive'}</span></td>
+                        <td>
+                            <button class="btn-small btn-secondary" onclick="editUser(${user.id})">Edit</button>
+                            <button class="btn-small btn-danger" onclick="deleteUser(${user.id})">Delete</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error('Failed to display users:', error);
+                tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:red;">Could not load user data.</td></tr>';
+            }
+        }
+
+        // --- Placeholder functions for future functionality ---
+
+        function editUser(userId) {
+            alert(`Edit functionality for user ID ${userId} will be implemented next.`);
+        }
+
+        function deleteUser(userId) {
+            alert(`Delete functionality for user ID ${userId} will be implemented later.`);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('accessToken');
+                window.location.href = '/index.html';
+            }
+        }
+
     </script>
 </body>
 </html>

@@ -91,3 +91,8 @@ def update_user_password(db: Session, user: models.User, new_password: str):
     db.commit()
     db.refresh(user)
     return user
+
+
+def get_users(db: Session, skip: int = 0, limit: int = 100):
+    """Fetch all users."""
+    return db.query(models.User).offset(skip).limit(limit).all()
