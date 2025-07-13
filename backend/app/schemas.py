@@ -52,3 +52,21 @@ class Config:
 
 class PromptPublic(Prompt):
     owner: User
+
+# Schema for creating a new shared item (request)
+class SharedItemBase(BaseModel):
+    title: str
+    description: str | None = None
+    url: str | None = None
+    content_type: str
+
+class SharedItemCreate(SharedItemBase):
+    pass
+
+class SharedItem(SharedItemBase):
+    id: int
+    owner_id: int
+    owner: User # This will nest the user's info in the response
+
+    class Config:
+        from_attributes = True

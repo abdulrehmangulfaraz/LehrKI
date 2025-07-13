@@ -56,3 +56,19 @@ def delete_prompt(db: Session, prompt_id: int):
         db.delete(db_prompt)
         db.commit()
     return db_prompt
+
+def create_shared_item(db: Session, item: schemas.SharedItemCreate, user_id: int):
+    """Create a new shared item for a user."""
+    db_item = models.SharedItem(**item.model_dump(), owner_id=user_id)
+    db.add(db_item)
+    db.commit()
+    db.refresh(db_item)
+    return db_item
+
+def get_shared_items_by_user(db: Session, user_id: int, skip: int = 0, limit: int = 100):
+    """Fetch all shared items owned by a specific user."""
+    return db.query(models.SharedItem).filter(models.SharedItem.owner_id == user_id).offset(skip).limit(limit).all()
+
+def get_all_shared_items(db: Session, skip: int = 0, limit: int = 100):
+    """Fetch all shared items from all users for the public collection."""
+    return db.query(models.SharedItem).order_by(models.SharedItem.id.desc()).offset(skip).limit(limit).all()
