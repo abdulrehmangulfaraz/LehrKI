@@ -1980,8 +1980,6 @@
                                         <th>User</th>
                                         <th>Role</th>
                                         <th>Status</th>
-                                        <th>Last Active</th>
-                                        <th>Joined</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -2293,6 +2291,46 @@
                 <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
                 <button class="btn btn-primary" onclick="saveModal()">Save</button>
             </div>
+        </div>
+    </div>
+
+    <div id="editUserModal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="hideModal('editUserModal')">&times;</button>
+            <div class="modal-header">
+                <h2>Edit User</h2>
+                <p>Update user details and role.</p>
+            </div>
+            <form id="editUserForm">
+                <input type="hidden" id="editUserId">
+
+                <div class="form-group">
+                    <label for="editUserFullName">Full Name</label>
+                    <input type="text" id="editUserFullName" required>
+                </div>
+                <div class="form-group">
+                    <label for="editUserEmail">Email Address</label>
+                    <input type="email" id="editUserEmail" disabled> </div>
+                <div class="form-group">
+                    <label for="editUserRole">Role</label>
+                    <select id="editUserRole" required>
+                        <option value="teacher">Teacher</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                 <div class="form-group">
+                    <label for="editUserStatus">Status</label>
+                    <select id="editUserStatus" required>
+                        <option value="true">Active</option>
+                        <option value="false">Inactive</option>
+                    </select>
+                </div>
+                <div id="editUserAlert" style="margin-top: 15px;"></div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="hideModal('editUserModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -2976,102 +3014,208 @@
         console.log('Admin Dashboard initialized successfully!');
     </script>
 
-    <script>
-        // --- AUTHENTICATION AND DATA FETCHING ---
+<script>
+    // --- AUTHENTICATION AND DATA LOADING ---
 
-        // This function runs automatically when the page loads
-        document.addEventListener('DOMContentLoaded', async () => {
-            const token = localStorage.getItem('accessToken');
+    document.addEventListener('DOMContentLoaded', () => {
+        const token = localStorage.getItem('accessToken');
+        if (!token) {
+            window.location.href = '/login.html';
+            return;
+        }
+        verifyAdminAndLoadData(token);
+    });
 
-            // 1. Check if the user is logged in at all
-            if (!token) {
-                window.location.href = '/login.html'; // Redirect if no token
+    async function verifyAdminAndLoadData(token) {
+        try {
+            const userResponse = await fetch('/api/auth/users/me', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!userResponse.ok) throw new Error('Authentication failed.');
+
+            const user = await userResponse.json();
+            if (user.role !== 'admin') {
+                alert('Access denied. You must be an admin to view this page.');
+                window.location.href = '/dashboard.html';
                 return;
             }
+            
+            // If user is an admin, load all necessary data
+            fetchAllUsers(token);
+            // You can add other data loading functions here in the future
+            
+        } catch (error) {
+            console.error('Error during page load:', error);
+            localStorage.removeItem('accessToken');
+            window.location.href = '/login.html';
+        }
+    }
 
-            // 2. Fetch the current user's data to verify their role
-            try {
-                const userResponse = await fetch('/api/auth/users/me', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
+    async function fetchAllUsers(token) {
+        const tableBody = document.getElementById('userManagementTableBody');
+        try {
+            const response = await fetch('/api/admin/users', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!response.ok) throw new Error('Failed to fetch user list.');
 
-                if (!userResponse.ok) throw new Error('Authentication failed.');
+            const users = await response.json();
+            tableBody.innerHTML = ''; // Clear placeholder rows
 
-                const user = await userResponse.json();
+            users.forEach(user => {
+                const row = document.createElement('tr');
+                const statusClass = user.is_active ? 'status-active' : 'status-inactive';
+                
+                // Note the correct class names for buttons
+                row.innerHTML = `
+                    <td>
+                        <div class="table-user">
+                            <div class="table-avatar">${user.full_name.charAt(0)}</div>
+                            <div class="table-user-info">
+                                <div class="table-user-name">${user.full_name}</div>
+                                <div class="table-user-email">${user.email}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${user.role}</td>
+                    <td><span class="status-badge ${statusClass}">${user.is_active ? 'Active' : 'Inactive'}</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="action-btn edit" onclick="editUser(${user.id})">✏️ Edit</button>
+                            <button class="action-btn delete" onclick="deleteUser(${user.id})">🗑️ Delete</button>
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        } catch (error) {
+            console.error('Failed to display users:', error);
+            tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:red;">Could not load user data.</td></tr>';
+        }
+    }
 
-                // 3. Check if the user is an admin
-                if (user.role !== 'admin') {
-                    alert('Access denied. You must be an admin to view this page.');
-                    window.location.href = '/dashboard.html'; // Redirect non-admins
-                    return;
-                }
+    // --- USER MANAGEMENT FUNCTIONS (EDIT & DELETE) ---
 
-                // 4. If the user is an admin, fetch the list of all users
-                fetchAllUsers(token);
+    async function editUser(userId) {
+        const token = localStorage.getItem('accessToken');
+        try {
+            const response = await fetch(`/api/admin/users/${userId}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
 
-            } catch (error) {
-                console.error('Error during page load:', error);
-                localStorage.removeItem('accessToken');
-                window.location.href = '/login.html';
-            }
+            if (!response.ok) throw new Error('Could not fetch user data.');
+
+            const user = await response.json();
+
+            // Populate the edit form
+            document.getElementById('editUserId').value = user.id;
+            document.getElementById('editUserFullName').value = user.full_name;
+            document.getElementById('editUserEmail').value = user.email;
+            document.getElementById('editUserRole').value = user.role;
+            document.getElementById('editUserStatus').value = user.is_active.toString();
+
+            // Show the modal using the correct function
+            showModal('editUserModal');
+        } catch (error) {
+            alert(`Error: ${error.message}`);
+        }
+    }
+
+    async function deleteUser(userId) {
+        if (!confirm(`Are you sure you want to delete user ID ${userId}? This action cannot be undone.`)) {
+            return;
+        }
+        const token = localStorage.getItem('accessToken');
+        try {
+            const response = await fetch(`/api/admin/users/${userId}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (!response.ok) throw new Error('Failed to delete user.');
+
+            alert('User deleted successfully.');
+            fetchAllUsers(token); // Refresh the user list
+        } catch (error) {
+            alert(`Error: ${error.message}`);
+        }
+    }
+    
+    function addUser() {
+        alert('Add User functionality will be implemented in a future step.');
+    }
+
+    // --- FORM SUBMISSION HANDLER ---
+
+    document.getElementById('editUserForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const token = localStorage.getItem('accessToken');
+        const userId = document.getElementById('editUserId').value;
+        
+        const updatedData = {
+            full_name: document.getElementById('editUserFullName').value,
+            role: document.getElementById('editUserRole').value,
+            is_active: document.getElementById('editUserStatus').value === 'true'
+        };
+
+        try {
+            const response = await fetch(`/api/admin/users/${userId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(updatedData)
+            });
+
+            if (!response.ok) throw new Error('Failed to update user.');
+            
+            alert('User updated successfully!');
+            hideModal('editUserModal');
+            fetchAllUsers(token); // Refresh list
+        } catch (error) {
+            alert(`Error: ${error.message}`);
+        }
+    });
+
+    // --- MODAL, NAVIGATION, AND LOGOUT HELPERS ---
+
+// --- MODAL AND LOGOUT HELPERS ---
+
+function showModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        // Your modals use the .show class to appear
+        modal.classList.add('show');
+    }
+}
+
+function hideModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.classList.remove('show');
+    }
+}
+    
+    // This is the correct close function for your modal structure
+    function closeModal() {
+        document.querySelector('.modal-overlay.active')?.classList.remove('active');
+    }
+
+    function showSection(sectionId) {
+        document.querySelectorAll('.section').forEach(section => {
+            section.classList.remove('active');
         });
+        const activeSection = document.getElementById(sectionId);
+        if(activeSection) activeSection.classList.add('active');
+    }
 
-        async function fetchAllUsers(token) {
-            const tableBody = document.getElementById('userManagementTableBody');
-            try {
-                const response = await fetch('/api/admin/users', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-
-                if (!response.ok) throw new Error('Failed to fetch user list.');
-
-                const users = await response.json();
-
-                // Clear the static placeholder rows
-                tableBody.innerHTML = '';
-
-                // 5. Dynamically create a table row for each user
-                users.forEach(user => {
-                    const row = document.createElement('tr');
-                    const statusClass = user.is_active ? 'status-active' : 'status-inactive';
-
-                    row.innerHTML = `
-                        <td>${user.id}</td>
-                        <td>${user.full_name}</td>
-                        <td>${user.email}</td>
-                        <td>${user.role}</td>
-                        <td><span class="status ${statusClass}">${user.is_active ? 'Active' : 'Inactive'}</span></td>
-                        <td>
-                            <button class="btn-small btn-secondary" onclick="editUser(${user.id})">Edit</button>
-                            <button class="btn-small btn-danger" onclick="deleteUser(${user.id})">Delete</button>
-                        </td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-
-            } catch (error) {
-                console.error('Failed to display users:', error);
-                tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:red;">Could not load user data.</td></tr>';
-            }
+    function logout() {
+        if (confirm('Are you sure you want to logout?')) {
+            localStorage.removeItem('accessToken');
+            window.location.href = '/index.html';
         }
-
-        // --- Placeholder functions for future functionality ---
-
-        function editUser(userId) {
-            alert(`Edit functionality for user ID ${userId} will be implemented next.`);
-        }
-
-        function deleteUser(userId) {
-            alert(`Delete functionality for user ID ${userId} will be implemented later.`);
-        }
-
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                localStorage.removeItem('accessToken');
-                window.location.href = '/index.html';
-            }
-        }
-
-    </script>
+    }
+</script>
 </body>
 </html>

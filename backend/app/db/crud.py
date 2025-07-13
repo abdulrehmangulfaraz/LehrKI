@@ -96,3 +96,32 @@ def update_user_password(db: Session, user: models.User, new_password: str):
 def get_users(db: Session, skip: int = 0, limit: int = 100):
     """Fetch all users."""
     return db.query(models.User).offset(skip).limit(limit).all()
+
+def update_user(db: Session, user_id: int, user_data: schemas.UserUpdate):
+    """
+    Update a user's details (e.g., role, is_active status).
+    """
+    db_user = get_user_by_id(db, user_id=user_id)
+    if db_user:
+        update_data = user_data.model_dump(exclude_unset=True)
+        for key, value in update_data.items():
+            setattr(db_user, key, value)
+        db.commit()
+        db.refresh(db_user)
+    return db_user
+
+def delete_user(db: Session, user_id: int):
+    """
+    Delete a user from the database.
+    """
+    db_user = get_user_by_id(db, user_id=user_id)
+    if db_user:
+        db.delete(db_user)
+        db.commit()
+    return db_user
+
+# Add this new function at the end of crud.py
+
+def get_user_by_id(db: Session, user_id: int):
+    """Fetch a single user by their ID."""
+    return db.query(models.User).filter(models.User.id == user_id).first()

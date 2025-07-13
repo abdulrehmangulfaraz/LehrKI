@@ -74,6 +74,8 @@ class SharedItem(SharedItemBase):
 # Schema for updating user information
 class UserUpdate(BaseModel):
     full_name: str | None = None
+    role: str | None = None
+    is_active: bool | None = None
 
 class PasswordUpdate(BaseModel):
     current_password: str
