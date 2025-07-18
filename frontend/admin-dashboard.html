@@ -914,38 +914,38 @@
 
     <div id="editUserModal" class="modal">
         <div class="modal-content">
-            <button class="close-modal" onclick="hideModal('editUserModal')">&times;</button>
             <div class="modal-header">
-                <h2>Edit User</h2>
-                <p>Update user details and role.</p>
+                <h3 class="modal-title">Edit User</h3>
+                <span class="modal-close" onclick="hideModal('editUserModal')">✕</span>
             </div>
             <form id="editUserForm">
-                <input type="hidden" id="editUserId">
-
-                <div class="form-group">
-                    <label for="editUserFullName">Full Name</label>
-                    <input type="text" id="editUserFullName" required>
+                <div class="modal-body">
+                    <input type="hidden" id="editUserId">
+                    <div class="form-group">
+                        <label for="editUserFullName" class="form-label">Full Name</label>
+                        <input type="text" id="editUserFullName" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editUserEmail" class="form-label">Email Address</label>
+                        <input type="email" id="editUserEmail" class="form-control" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="editUserRole" class="form-label">Role</label>
+                        <select id="editUserRole" class="form-control form-select" required>
+                            <option value="teacher">Teacher</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editUserStatus" class="form-label">Status</label>
+                        <select id="editUserStatus" class="form-control form-select" required>
+                            <option value="true">Active</option>
+                            <option value="false">Inactive</option>
+                        </select>
+                    </div>
+                    <div id="editUserAlert" style="margin-top: 15px;"></div>
                 </div>
-                <div class="form-group">
-                    <label for="editUserEmail">Email Address</label>
-                    <input type="email" id="editUserEmail" disabled>
-                </div>
-                <div class="form-group">
-                    <label for="editUserRole">Role</label>
-                    <select id="editUserRole" required>
-                        <option value="teacher">Teacher</option>
-                        <option value="admin">Admin</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="editUserStatus">Status</label>
-                    <select id="editUserStatus" required>
-                        <option value="true">Active</option>
-                        <option value="false">Inactive</option>
-                    </select>
-                </div>
-                <div id="editUserAlert" style="margin-top: 15px;"></div>
-                <div class="modal-actions">
+                <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" onclick="hideModal('editUserModal')">Cancel</button>
                     <button type="submit" class="btn btn-primary">Save Changes</button>
                 </div>
