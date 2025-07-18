@@ -804,9 +804,7 @@ async function deleteUser(userId) {
     }
 }
 
-function addUser() {
-    alert('Add User functionality will be implemented in a future step.');
-}
+
 
 // --- FORM SUBMISSION HANDLER ---
 
@@ -879,3 +877,50 @@ function logout() {
         window.location.href = '/index.html';
     }
 }
+
+// Make sure your code looks like this
+document.addEventListener('DOMContentLoaded', (event) => {
+    // Move your form submission logic inside this wrapper function
+
+    const addUserForm = document.getElementById('addUserForm');
+
+    // It's good practice to check if the element exists before adding a listener
+    if (addUserForm) {
+        addUserForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const fullName = document.getElementById('add-full-name').value;
+            const email = document.getElementById('add-email').value;
+            const password = document.getElementById('add-password').value;
+            const role = document.getElementById('add-role').value;
+
+            fetch('/api/admin/users', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    full_name: fullName,
+                    email: email,
+                    password: password,
+                    role: role
+                })
+            })
+                .then(response => {
+                    if (response.ok) {
+                        const addUserModal = bootstrap.Modal.getInstance(document.getElementById('addUserModal'));
+                        addUserModal.hide();
+                        alert('User added successfully!');
+                        // Optionally refresh user list here
+                    } else {
+                        alert('Failed to add user. Check console for details.');
+                        response.json().then(data => console.error('Error details:', data));
+                    }
+                })
+                .catch(error => {
+                    console.error('Network or other error:', error);
+                    alert('An error occurred while adding the user.');
+                });
+        });
+    }
+});

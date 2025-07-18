@@ -7,6 +7,7 @@ class UserCreate(BaseModel):
     full_name: str 
     email: EmailStr
     password: str
+    role: str = "teacher"
 
 # Schema for reading user data (response)
 class User(BaseModel):
@@ -80,4 +81,5 @@ class UserUpdate(BaseModel):
 class PasswordUpdate(BaseModel):
     current_password: str
     new_password: str
+
 
