@@ -1,370 +1,13 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Writing Assistant - AI Teacher Toolkit</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #333;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .header h1 {
-            color: #333;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .back-btn {
-            padding: 10px 20px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .back-btn:hover {
-            background: #5a67d8;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .tool-container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-            margin-bottom: 30px;
-        }
-
-        .tool-header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .tool-header h2 {
-            color: #333;
-            margin-bottom: 15px;
-            font-size: 32px;
-        }
-
-        .tool-header p {
-            color: #666;
-            font-size: 18px;
-            line-height: 1.6;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .writing-interface {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-
-        .input-section, .output-section {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 15px;
-            border: 2px solid #e9ecef;
-        }
-
-        .section-title {
-            font-weight: bold;
-            margin-bottom: 15px;
-            color: #333;
-            font-size: 18px;
-        }
-
-        .text-input {
-            width: 100%;
-            min-height: 300px;
-            padding: 20px;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            font-size: 16px;
-            line-height: 1.6;
-            resize: vertical;
-            font-family: inherit;
-            transition: border-color 0.3s ease;
-        }
-
-        .text-input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .analysis-output {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            border: 2px solid #e9ecef;
-            min-height: 300px;
-            font-size: 16px;
-            line-height: 1.6;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            font-size: 16px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-secondary {
-            background: white;
-            color: #667eea;
-            border: 2px solid #667eea;
-        }
-
-        .btn-success {
-            background: #28a745;
-            color: white;
-        }
-
-        .btn-warning {
-            background: #ffc107;
-            color: #212529;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .stats-bar {
-            background: #e9ecef;
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 24px;
-            font-weight: bold;
-            color: #667eea;
-            display: block;
-        }
-
-        .stat-label {
-            color: #666;
-            font-size: 14px;
-            margin-top: 5px;
-        }
-
-        .suggestions-list {
-            margin-top: 20px;
-        }
-
-        .suggestion-item {
-            background: rgba(102, 126, 234, 0.1);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            border-left: 4px solid #667eea;
-        }
-
-        .suggestion-title {
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 5px;
-        }
-
-        .suggestion-text {
-            color: #666;
-            line-height: 1.5;
-        }
-
-        .highlight {
-            background: rgba(255, 193, 7, 0.3);
-            padding: 2px 4px;
-            border-radius: 3px;
-        }
-
-        .error-highlight {
-            background: rgba(220, 53, 69, 0.2);
-            border-bottom: 2px solid #dc3545;
-        }
-
-        .loading {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            color: #667eea;
-            font-style: italic;
-        }
-
-        .spinner {
-            width: 20px;
-            height: 20px;
-            border: 2px solid #f3f3f3;
-            border-top: 2px solid #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .examples-section {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .examples-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .example-card {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            border: 1px solid #e9ecef;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .example-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            border-color: #667eea;
-        }
-
-        .example-title {
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #333;
-        }
-
-        .example-text {
-            color: #666;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-
-        @media (max-width: 768px) {
-            .writing-interface {
-                grid-template-columns: 1fr;
-            }
-
-            .container {
-                padding: 10px;
-            }
-
-            .tool-container {
-                padding: 20px;
-            }
-
-            .action-buttons {
-                justify-content: center;
-            }
-
-            .stats-bar {
-                justify-content: center;
-            }
-
-            .header {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-            }
-        }
-
-        .mode-selector {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            justify-content: center;
-        }
-
-        .mode-btn {
-            padding: 8px 16px;
-            border: 2px solid #667eea;
-            background: white;
-            color: #667eea;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .mode-btn.active {
-            background: #667eea;
-            color: white;
-        }
-
-        .mode-btn:hover {
-            transform: translateY(-1px);
-        }
-    </style>
+    <link rel="stylesheet" href="./static/css/writing-assistant-tool.css">
 </head>
+
 <body>
     <div class="container">
         <div class="header">
@@ -378,7 +21,8 @@
         <div class="tool-container">
             <div class="tool-header">
                 <h2>AI-Powered Writing Assistant</h2>
-                <p>Improve your writing with intelligent suggestions for grammar, style, clarity, and structure. Perfect for students and teachers alike.</p>
+                <p>Improve your writing with intelligent suggestions for grammar, style, clarity, and structure. Perfect
+                    for students and teachers alike.</p>
             </div>
 
             <div class="mode-selector">
@@ -391,13 +35,10 @@
             <div class="writing-interface">
                 <div class="input-section">
                     <div class="section-title">📝 Your Text</div>
-                    <textarea 
-                        class="text-input" 
-                        id="textInput" 
+                    <textarea class="text-input" id="textInput"
                         placeholder="Paste or type your text here. The AI will analyze it and provide suggestions for improvement..."
-                        oninput="analyzeText()"
-                    ></textarea>
-                    
+                        oninput="analyzeText()"></textarea>
+
                     <div class="action-buttons">
                         <button class="btn btn-primary" onclick="analyzeText()">🔍 Analyze Text</button>
                         <button class="btn btn-secondary" onclick="clearText()">🗑️ Clear</button>
@@ -425,7 +66,7 @@
                             </ul>
                         </div>
                     </div>
-                    
+
                     <div class="suggestions-list" id="suggestionsList"></div>
                 </div>
             </div>
@@ -457,23 +98,26 @@
         <div class="examples-section">
             <h3>📚 Quick Start Examples</h3>
             <p>Click on any example below to load it into the writing assistant:</p>
-            
+
             <div class="examples-grid">
                 <div class="example-card" onclick="loadExampleText('essay')">
                     <div class="example-title">Student Essay</div>
-                    <div class="example-text">Sample essay text with common writing issues for the AI to analyze and improve...</div>
+                    <div class="example-text">Sample essay text with common writing issues for the AI to analyze and
+                        improve...</div>
                 </div>
-                
+
                 <div class="example-card" onclick="loadExampleText('email')">
                     <div class="example-title">Professional Email</div>
-                    <div class="example-text">Professional communication that needs clarity and tone improvements...</div>
+                    <div class="example-text">Professional communication that needs clarity and tone improvements...
+                    </div>
                 </div>
-                
+
                 <div class="example-card" onclick="loadExampleText('creative')">
                     <div class="example-title">Creative Story</div>
-                    <div class="example-text">Creative writing sample for style enhancement and flow improvement...</div>
+                    <div class="example-text">Creative writing sample for style enhancement and flow improvement...
+                    </div>
                 </div>
-                
+
                 <div class="example-card" onclick="loadExampleText('report')">
                     <div class="example-title">Research Report</div>
                     <div class="example-text">Academic report excerpt for structure and clarity analysis...</div>
@@ -493,7 +137,7 @@
                 btn.classList.remove('active');
             });
             event.target.classList.add('active');
-            
+
             // Re-analyze with new mode if text exists
             const text = document.getElementById('textInput').value;
             if (text.trim()) {
@@ -527,7 +171,7 @@
             // Simulate AI analysis with delay
             analysisTimeout = setTimeout(() => {
                 loadingIndicator.classList.add('hidden');
-                
+
                 const analysis = performAnalysis(text, currentMode);
                 displayAnalysis(analysis);
                 displaySuggestions(analysis.suggestions);
@@ -538,7 +182,7 @@
         function performAnalysis(text, mode) {
             const words = text.split(/\s+/).filter(word => word.length > 0);
             const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
-            
+
             let analysis = {
                 mode: mode,
                 originalText: text,
@@ -547,7 +191,7 @@
                 score: 0
             };
 
-            switch(mode) {
+            switch (mode) {
                 case 'grammar':
                     analysis = analyzeGrammar(text, words, sentences);
                     break;
@@ -713,7 +357,7 @@
             let suggestions = [];
 
             // Check for descriptive language
-            const descriptiveWords = words.filter(word => 
+            const descriptiveWords = words.filter(word =>
                 /\b(beautiful|amazing|wonderful|terrible|huge|tiny|bright|dark)\b/i.test(word)
             );
 
@@ -735,7 +379,7 @@
             }
 
             // Check for sensory details
-            const sensoryWords = words.filter(word => 
+            const sensoryWords = words.filter(word =>
                 /\b(see|hear|feel|smell|taste|touch|sound|look|bright|loud|soft|sweet|rough)\b/i.test(word)
             );
 
@@ -764,7 +408,7 @@
             readabilityScore.textContent = analysis.score;
 
             let html = `<h4>📊 Analysis Results (${analysis.mode.charAt(0).toUpperCase() + analysis.mode.slice(1)} Mode)</h4>`;
-            
+
             if (analysis.issues.length === 0) {
                 html += `
                     <div style="color: #28a745; margin: 15px 0;">
@@ -793,14 +437,14 @@
 
         function displaySuggestions(suggestions) {
             const suggestionsList = document.getElementById('suggestionsList');
-            
+
             if (suggestions.length === 0) {
                 suggestionsList.innerHTML = '';
                 return;
             }
 
             let html = '<h4 style="margin-bottom: 15px;">💡 Improvement Suggestions</h4>';
-            
+
             suggestions.forEach((suggestion, index) => {
                 const typeColor = {
                     'grammar': '#dc3545',
@@ -828,7 +472,7 @@
         function updateStats(text) {
             const words = text.split(/\s+/).filter(word => word.length > 0);
             const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
-            
+
             document.getElementById('wordCount').textContent = words.length;
             document.getElementById('charCount').textContent = text.length;
             document.getElementById('sentenceCount').textContent = sentences.length;
@@ -850,7 +494,7 @@
                 "I am writing to inform you that the meeting has been scheduled. The meeting will be held in the conference room. Please attend the meeting on time.",
                 "The magnificent castle stood majestically on the hill, its ancient stones whispering stories of brave knights and beautiful princesses who once walked its grand halls."
             ];
-            
+
             const randomExample = examples[Math.floor(Math.random() * examples.length)];
             document.getElementById('textInput').value = randomExample;
             analyzeText();
@@ -859,11 +503,11 @@
         function loadExampleText(type) {
             const examples = {
                 essay: "The climate change is a serious issue that effects everyone. There are many factors that contribute to this problem. First, the burning of fossil fuels release greenhouse gases. Second, deforestation reduce the number of trees that can absorb carbon dioxide. This problems need immediate attention.",
-                
+
                 email: "Hi there, I hope your doing well. I wanted to reach out about the project we discussed. There might be some issues with the timeline but we can probably work around them. Let me know what you think. Thanks!",
-                
+
                 creative: "The old house was scary. It was dark inside. There were strange noises. The door creaked when it opened. Something was moving in the shadows. The character felt afraid.",
-                
+
                 report: "The research study examined the effectiveness of different teaching methods. The results showed that interactive learning approaches were more effective than traditional lecture-based methods. This finding suggests that educators should consider implementing more interactive techniques in their classrooms."
             };
 
@@ -888,9 +532,9 @@
         }
 
         // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             console.log('Writing Assistant loaded successfully!');
-            
+
             // Load a sample text to demonstrate
             setTimeout(() => {
                 loadExample();
@@ -898,4 +542,5 @@
         });
     </script>
 </body>
+
 </html>

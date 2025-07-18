@@ -1,0 +1,469 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    color: #333;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header h1 {
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.language-selector {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.lang-btn {
+    padding: 8px 16px;
+    border: 2px solid #667eea;
+    background: white;
+    color: #667eea;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: bold;
+}
+
+.lang-btn.active {
+    background: #667eea;
+    color: white;
+}
+
+.back-btn {
+    padding: 10px 20px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.back-btn:hover {
+    background: #5a67d8;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.tool-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.tool-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    border-color: #667eea;
+}
+
+.tool-card.active {
+    border-color: #667eea;
+    background: rgba(102, 126, 234, 0.05);
+}
+
+.tool-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.tool-icon {
+    font-size: 40px;
+}
+
+.tool-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
+
+.tool-description {
+    color: #666;
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.tool-interface {
+    min-height: 200px;
+}
+
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    margin: 5px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-secondary {
+    background: white;
+    color: #667eea;
+    border: 2px solid #667eea;
+}
+
+.btn-success {
+    background: #28a745;
+    color: white;
+}
+
+.btn-warning {
+    background: #ffc107;
+    color: #212529;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.exercise-area {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 15px 0;
+    border: 2px solid #e9ecef;
+}
+
+.question {
+    font-weight: bold;
+    margin-bottom: 15px;
+    font-size: 18px;
+}
+
+.options {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.option {
+    padding: 12px;
+    background: white;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.option:hover {
+    border-color: #667eea;
+    background: rgba(102, 126, 234, 0.05);
+}
+
+.option.selected {
+    border-color: #667eea;
+    background: rgba(102, 126, 234, 0.1);
+}
+
+.option.correct {
+    border-color: #28a745;
+    background: rgba(40, 167, 69, 0.1);
+}
+
+.option.incorrect {
+    border-color: #dc3545;
+    background: rgba(220, 53, 69, 0.1);
+}
+
+.vocab-card {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin: 15px 0;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.vocab-word {
+    font-size: 36px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.vocab-translation {
+    font-size: 20px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.vocab-example {
+    font-style: italic;
+    color: #888;
+    margin-top: 15px;
+}
+
+.conversation-area {
+    background: #f8f9fa;
+    border-radius: 15px;
+    padding: 20px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.message {
+    margin-bottom: 15px;
+    padding: 12px 18px;
+    border-radius: 20px;
+    max-width: 80%;
+}
+
+.message.ai {
+    background: rgba(102, 126, 234, 0.1);
+    border: 2px solid rgba(102, 126, 234, 0.3);
+    align-self: flex-start;
+}
+
+.message.user {
+    background: #667eea;
+    color: white;
+    margin-left: auto;
+    text-align: right;
+}
+
+.input-area {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.text-input {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 25px;
+    outline: none;
+    font-size: 16px;
+}
+
+.text-input:focus {
+    border-color: #667eea;
+}
+
+.stats-bar {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 15px;
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 24px;
+    font-weight: bold;
+    color: #667eea;
+    display: block;
+}
+
+.stat-label {
+    color: #666;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.progress-bar {
+    background: #e9ecef;
+    border-radius: 10px;
+    height: 20px;
+    margin: 10px 0;
+    overflow: hidden;
+}
+
+.progress-fill {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    height: 100%;
+    transition: width 0.3s ease;
+    border-radius: 10px;
+}
+
+.level-indicator {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.level-badge {
+    background: #667eea;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.feedback {
+    padding: 15px;
+    border-radius: 10px;
+    margin: 15px 0;
+    font-weight: bold;
+}
+
+.feedback.correct {
+    background: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+    border: 2px solid rgba(40, 167, 69, 0.3);
+}
+
+.feedback.incorrect {
+    background: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+    border: 2px solid rgba(220, 53, 69, 0.3);
+}
+
+.pronunciation-area {
+    text-align: center;
+    padding: 20px;
+}
+
+.pronunciation-word {
+    font-size: 42px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.pronunciation-guide {
+    font-size: 20px;
+    color: #666;
+    margin-bottom: 20px;
+    font-family: 'Courier New', monospace;
+}
+
+.audio-controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.reading-passage {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    line-height: 1.8;
+    font-size: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.hidden {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .tools-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .container {
+        padding: 10px;
+    }
+
+    .header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .language-selector {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .vocab-word {
+        font-size: 28px;
+    }
+
+    .pronunciation-word {
+        font-size: 32px;
+    }
+}
+
+.writing-prompt {
+    background: rgba(102, 126, 234, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    border-left: 4px solid #667eea;
+}
+
+.textarea {
+    width: 100%;
+    min-height: 150px;
+    padding: 15px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    font-size: 16px;
+    line-height: 1.6;
+    resize: vertical;
+    font-family: inherit;
+}
+
+.textarea:focus {
+    outline: none;
+    border-color: #667eea;
+}

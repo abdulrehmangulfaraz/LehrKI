@@ -1,482 +1,13 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Language Learning Hub - AI Teacher Toolkit</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #333;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .header h1 {
-            color: #333;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .language-selector {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .lang-btn {
-            padding: 8px 16px;
-            border: 2px solid #667eea;
-            background: white;
-            color: #667eea;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: bold;
-        }
-
-        .lang-btn.active {
-            background: #667eea;
-            color: white;
-        }
-
-        .back-btn {
-            padding: 10px 20px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .back-btn:hover {
-            background: #5a67d8;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .tools-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-
-        .tool-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-
-        .tool-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-            border-color: #667eea;
-        }
-
-        .tool-card.active {
-            border-color: #667eea;
-            background: rgba(102, 126, 234, 0.05);
-        }
-
-        .tool-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .tool-icon {
-            font-size: 40px;
-        }
-
-        .tool-title {
-            font-size: 24px;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .tool-description {
-            color: #666;
-            margin-bottom: 20px;
-            line-height: 1.6;
-        }
-
-        .tool-interface {
-            min-height: 200px;
-        }
-
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            font-size: 14px;
-            margin: 5px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-secondary {
-            background: white;
-            color: #667eea;
-            border: 2px solid #667eea;
-        }
-
-        .btn-success {
-            background: #28a745;
-            color: white;
-        }
-
-        .btn-warning {
-            background: #ffc107;
-            color: #212529;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .exercise-area {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            margin: 15px 0;
-            border: 2px solid #e9ecef;
-        }
-
-        .question {
-            font-weight: bold;
-            margin-bottom: 15px;
-            font-size: 18px;
-        }
-
-        .options {
-            display: grid;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .option {
-            padding: 12px;
-            background: white;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .option:hover {
-            border-color: #667eea;
-            background: rgba(102, 126, 234, 0.05);
-        }
-
-        .option.selected {
-            border-color: #667eea;
-            background: rgba(102, 126, 234, 0.1);
-        }
-
-        .option.correct {
-            border-color: #28a745;
-            background: rgba(40, 167, 69, 0.1);
-        }
-
-        .option.incorrect {
-            border-color: #dc3545;
-            background: rgba(220, 53, 69, 0.1);
-        }
-
-        .vocab-card {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            margin: 15px 0;
-            min-height: 200px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .vocab-word {
-            font-size: 36px;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 15px;
-        }
-
-        .vocab-translation {
-            font-size: 20px;
-            color: #666;
-            margin-bottom: 10px;
-        }
-
-        .vocab-example {
-            font-style: italic;
-            color: #888;
-            margin-top: 15px;
-        }
-
-        .conversation-area {
-            background: #f8f9fa;
-            border-radius: 15px;
-            padding: 20px;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .message {
-            margin-bottom: 15px;
-            padding: 12px 18px;
-            border-radius: 20px;
-            max-width: 80%;
-        }
-
-        .message.ai {
-            background: rgba(102, 126, 234, 0.1);
-            border: 2px solid rgba(102, 126, 234, 0.3);
-            align-self: flex-start;
-        }
-
-        .message.user {
-            background: #667eea;
-            color: white;
-            margin-left: auto;
-            text-align: right;
-        }
-
-        .input-area {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .text-input {
-            flex: 1;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 25px;
-            outline: none;
-            font-size: 16px;
-        }
-
-        .text-input:focus {
-            border-color: #667eea;
-        }
-
-        .stats-bar {
-            background: rgba(255, 255, 255, 0.9);
-            padding: 20px;
-            border-radius: 15px;
-            margin-top: 20px;
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 24px;
-            font-weight: bold;
-            color: #667eea;
-            display: block;
-        }
-
-        .stat-label {
-            color: #666;
-            font-size: 14px;
-            margin-top: 5px;
-        }
-
-        .progress-bar {
-            background: #e9ecef;
-            border-radius: 10px;
-            height: 20px;
-            margin: 10px 0;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            height: 100%;
-            transition: width 0.3s ease;
-            border-radius: 10px;
-        }
-
-        .level-indicator {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 15px 0;
-        }
-
-        .level-badge {
-            background: #667eea;
-            color: white;
-            padding: 5px 12px;
-            border-radius: 15px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .feedback {
-            padding: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
-            font-weight: bold;
-        }
-
-        .feedback.correct {
-            background: rgba(40, 167, 69, 0.1);
-            color: #28a745;
-            border: 2px solid rgba(40, 167, 69, 0.3);
-        }
-
-        .feedback.incorrect {
-            background: rgba(220, 53, 69, 0.1);
-            color: #dc3545;
-            border: 2px solid rgba(220, 53, 69, 0.3);
-        }
-
-        .pronunciation-area {
-            text-align: center;
-            padding: 20px;
-        }
-
-        .pronunciation-word {
-            font-size: 42px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #333;
-        }
-
-        .pronunciation-guide {
-            font-size: 20px;
-            color: #666;
-            margin-bottom: 20px;
-            font-family: 'Courier New', monospace;
-        }
-
-        .audio-controls {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin: 20px 0;
-        }
-
-        .reading-passage {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            line-height: 1.8;
-            font-size: 16px;
-            margin-bottom: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        @media (max-width: 768px) {
-            .tools-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .container {
-                padding: 10px;
-            }
-
-            .header {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-            }
-
-            .language-selector {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-
-            .vocab-word {
-                font-size: 28px;
-            }
-
-            .pronunciation-word {
-                font-size: 32px;
-            }
-        }
-
-        .writing-prompt {
-            background: rgba(102, 126, 234, 0.1);
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            border-left: 4px solid #667eea;
-        }
-
-        .textarea {
-            width: 100%;
-            min-height: 150px;
-            padding: 15px;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            font-size: 16px;
-            line-height: 1.6;
-            resize: vertical;
-            font-family: inherit;
-        }
-
-        .textarea:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-    </style>
+    <link rel="stylesheet" href="./static/css/language-hub.css">
 </head>
+
 <body>
     <div class="container">
         <div class="header">
@@ -484,7 +15,7 @@
                 <span>🔤</span>
                 Language Learning Hub
             </h1>
-            
+
             <div class="language-selector">
                 <span>Learning:</span>
                 <button class="lang-btn active" onclick="setLanguage('spanish')">🇪🇸 Spanish</button>
@@ -492,7 +23,7 @@
                 <button class="lang-btn" onclick="setLanguage('german')">🇩🇪 German</button>
                 <button class="lang-btn" onclick="setLanguage('italian')">🇮🇹 Italian</button>
             </div>
-            
+
             <a href="index.html" class="back-btn">← Back to Toolkit</a>
         </div>
 
@@ -515,7 +46,7 @@
                 <div class="tool-description">
                     Master grammar rules through interactive exercises and instant feedback.
                 </div>
-                
+
                 <div class="tool-interface">
                     <div class="exercise-area">
                         <div class="question" id="grammarQuestion">
@@ -529,7 +60,7 @@
                         </div>
                         <div id="grammarFeedback" class="feedback hidden"></div>
                     </div>
-                    
+
                     <div style="text-align: center;">
                         <button class="btn btn-primary" onclick="nextGrammarQuestion()">Next Question</button>
                         <button class="btn btn-secondary" onclick="resetGrammar()">Reset</button>
@@ -552,14 +83,15 @@
                 <div class="tool-description">
                     Learn new words with flashcards, pronunciation, and contextual examples.
                 </div>
-                
+
                 <div class="tool-interface">
                     <div class="vocab-card" id="vocabCard">
                         <div class="vocab-word" id="vocabWord">Casa</div>
                         <div class="vocab-translation hidden" id="vocabTranslation">House</div>
-                        <div class="vocab-example hidden" id="vocabExample">"Mi casa es muy grande" - My house is very big</div>
+                        <div class="vocab-example hidden" id="vocabExample">"Mi casa es muy grande" - My house is very
+                            big</div>
                     </div>
-                    
+
                     <div style="text-align: center;">
                         <button class="btn btn-primary" onclick="flipVocabCard()">Show Translation</button>
                         <button class="btn btn-success" onclick="nextVocabWord(true)">✓ Know It</button>
@@ -583,7 +115,7 @@
                 <div class="tool-description">
                     Practice real conversations with AI-powered dialogue scenarios.
                 </div>
-                
+
                 <div class="tool-interface">
                     <div class="conversation-area" id="conversationArea">
                         <div class="message ai">
@@ -593,14 +125,13 @@
                             (Hello! Welcome to the restaurant. How are you today?)
                         </div>
                     </div>
-                    
+
                     <div class="input-area">
-                        <input type="text" class="text-input" id="conversationInput" 
-                               placeholder="Type your response in Spanish..." 
-                               onkeypress="handleConversationEnter(event)">
+                        <input type="text" class="text-input" id="conversationInput"
+                            placeholder="Type your response in Spanish..." onkeypress="handleConversationEnter(event)">
                         <button class="btn btn-primary" onclick="sendConversationMessage()">Send</button>
                     </div>
-                    
+
                     <div style="text-align: center; margin-top: 10px;">
                         <button class="btn btn-secondary" onclick="getConversationHint()">💡 Hint</button>
                         <button class="btn btn-secondary" onclick="newConversationTopic()">🔄 New Topic</button>
@@ -623,18 +154,18 @@
                 <div class="tool-description">
                     Perfect your pronunciation with audio examples and speech recognition.
                 </div>
-                
+
                 <div class="tool-interface">
                     <div class="pronunciation-area">
                         <div class="pronunciation-word" id="pronunciationWord">Rojo</div>
                         <div class="pronunciation-guide" id="pronunciationGuide">/ˈro.xo/</div>
-                        
+
                         <div class="audio-controls">
                             <button class="btn btn-primary" onclick="playPronunciation()">🔊 Listen</button>
                             <button class="btn btn-secondary" onclick="recordPronunciation()">🎤 Record</button>
                             <button class="btn btn-warning" onclick="nextPronunciationWord()">Next Word</button>
                         </div>
-                        
+
                         <div id="pronunciationFeedback" class="feedback hidden">
                             Great job! Your pronunciation is 85% accurate.
                         </div>
@@ -657,13 +188,16 @@
                 <div class="tool-description">
                     Improve reading skills with engaging texts and comprehension questions.
                 </div>
-                
+
                 <div class="tool-interface">
                     <div class="reading-passage" id="readingPassage">
                         <strong>La Familia García</strong><br><br>
-                        La familia García vive en una casa pequeña en Madrid. El padre, Carlos, trabaja en una oficina. La madre, María, es profesora en una escuela primaria. Tienen dos hijos: Ana, de 15 años, y Miguel, de 12 años. Los fines de semana, a la familia le gusta ir al parque y pasar tiempo juntos.
+                        La familia García vive en una casa pequeña en Madrid. El padre, Carlos, trabaja en una oficina.
+                        La madre, María, es profesora en una escuela primaria. Tienen dos hijos: Ana, de 15 años, y
+                        Miguel, de 12 años. Los fines de semana, a la familia le gusta ir al parque y pasar tiempo
+                        juntos.
                     </div>
-                    
+
                     <div class="exercise-area">
                         <div class="question">¿Dónde vive la familia García?</div>
                         <div class="options">
@@ -673,7 +207,7 @@
                         </div>
                         <div id="readingFeedback" class="feedback hidden"></div>
                     </div>
-                    
+
                     <div style="text-align: center;">
                         <button class="btn btn-primary" onclick="nextReadingQuestion()">Next Question</button>
                         <button class="btn btn-secondary" onclick="newReadingText()">New Text</button>
@@ -696,21 +230,22 @@
                 <div class="tool-description">
                     Develop writing skills with guided prompts and AI feedback.
                 </div>
-                
+
                 <div class="tool-interface">
                     <div class="writing-prompt">
-                        <strong>Writing Prompt:</strong> Describe your ideal vacation in Spanish. Include where you would go, what you would do, and who you would travel with. (100-150 words)
+                        <strong>Writing Prompt:</strong> Describe your ideal vacation in Spanish. Include where you
+                        would go, what you would do, and who you would travel with. (100-150 words)
                     </div>
-                    
-                    <textarea class="textarea" id="writingText" 
-                              placeholder="Start writing your response in Spanish..."></textarea>
-                    
+
+                    <textarea class="textarea" id="writingText"
+                        placeholder="Start writing your response in Spanish..."></textarea>
+
                     <div style="text-align: center; margin-top: 15px;">
                         <button class="btn btn-primary" onclick="analyzeWriting()">📝 Get Feedback</button>
                         <button class="btn btn-secondary" onclick="newWritingPrompt()">🔄 New Prompt</button>
                         <button class="btn btn-success" onclick="saveWriting()">💾 Save</button>
                     </div>
-                    
+
                     <div id="writingFeedback" class="feedback hidden"></div>
                 </div>
             </div>
@@ -780,9 +315,9 @@
             });
 
             element.classList.add('selected');
-            
+
             const feedback = document.getElementById('grammarFeedback');
-            
+
             if (isCorrect) {
                 element.classList.add('correct');
                 feedback.className = 'feedback correct';
@@ -795,17 +330,17 @@
                 feedback.className = 'feedback incorrect';
                 feedback.textContent = 'Incorrect. "Soy" is used for permanent states like being a student.';
             }
-            
+
             feedback.classList.remove('hidden');
         }
 
         function nextGrammarQuestion() {
             currentGrammarIndex = (currentGrammarIndex + 1) % languageData[currentLanguage].grammar.length;
             const questionData = languageData[currentLanguage].grammar[currentGrammarIndex];
-            
+
             document.getElementById('grammarQuestion').textContent = questionData.question;
             document.getElementById('grammarFeedback').classList.add('hidden');
-            
+
             const options = document.querySelectorAll('.option');
             options.forEach((opt, index) => {
                 opt.textContent = questionData.options[index];
@@ -825,7 +360,7 @@
             const translation = document.getElementById('vocabTranslation');
             const example = document.getElementById('vocabExample');
             const button = event.target;
-            
+
             if (cardFlipped) {
                 translation.classList.remove('hidden');
                 example.classList.remove('hidden');
@@ -840,19 +375,19 @@
         function nextVocabWord(known) {
             currentVocabIndex = (currentVocabIndex + 1) % languageData[currentLanguage].vocab.length;
             const vocabData = languageData[currentLanguage].vocab[currentVocabIndex];
-            
+
             document.getElementById('vocabWord').textContent = vocabData.word;
             document.getElementById('vocabTranslation').textContent = vocabData.translation;
             document.getElementById('vocabExample').textContent = vocabData.example;
-            
+
             // Reset card state
             document.getElementById('vocabTranslation').classList.add('hidden');
             document.getElementById('vocabExample').classList.add('hidden');
             cardFlipped = false;
-            
+
             const button = document.querySelector('.btn-primary');
             button.textContent = 'Show Translation';
-            
+
             // Update stats based on whether user knew the word
             if (known) {
                 updateStats('correct');
@@ -865,11 +400,11 @@
         function sendConversationMessage() {
             const input = document.getElementById('conversationInput');
             const message = input.value.trim();
-            
+
             if (message) {
                 addConversationMessage(message, 'user');
                 input.value = '';
-                
+
                 // Simulate AI response
                 setTimeout(() => {
                     const responses = [
@@ -916,7 +451,7 @@
                 'At the hotel reception'
             ];
             const randomTopic = topics[Math.floor(Math.random() * topics.length)];
-            
+
             document.getElementById('conversationArea').innerHTML = `
                 <div class="message ai">
                     New scenario: ${randomTopic}. Let's start! ¡Hola!
@@ -931,7 +466,7 @@
             feedback.className = 'feedback correct';
             feedback.textContent = '🔊 Playing pronunciation...';
             feedback.classList.remove('hidden');
-            
+
             setTimeout(() => {
                 feedback.classList.add('hidden');
             }, 2000);
@@ -946,11 +481,11 @@
 
         function nextPronunciationWord() {
             const pronunciationData = languageData[currentLanguage].pronunciation;
-            const currentIndex = pronunciationData.findIndex(p => 
+            const currentIndex = pronunciationData.findIndex(p =>
                 p.word === document.getElementById('pronunciationWord').textContent
             );
             const nextIndex = (currentIndex + 1) % pronunciationData.length;
-            
+
             document.getElementById('pronunciationWord').textContent = pronunciationData[nextIndex].word;
             document.getElementById('pronunciationGuide').textContent = pronunciationData[nextIndex].guide;
             document.getElementById('pronunciationFeedback').classList.add('hidden');
@@ -965,9 +500,9 @@
             });
 
             element.classList.add('selected');
-            
+
             const feedback = document.getElementById('readingFeedback');
-            
+
             if (isCorrect) {
                 element.classList.add('correct');
                 feedback.className = 'feedback correct';
@@ -977,7 +512,7 @@
                 feedback.className = 'feedback incorrect';
                 feedback.textContent = 'Incorrect. Read the first sentence again: "La familia García vive en una casa pequeña en Madrid."';
             }
-            
+
             feedback.classList.remove('hidden');
         }
 
@@ -999,14 +534,14 @@
         function analyzeWriting() {
             const text = document.getElementById('writingText').value;
             const feedback = document.getElementById('writingFeedback');
-            
+
             if (text.trim() === '') {
                 feedback.className = 'feedback incorrect';
                 feedback.textContent = 'Please write something first!';
                 feedback.classList.remove('hidden');
                 return;
             }
-            
+
             feedback.className = 'feedback correct';
             feedback.textContent = '✅ Good use of vocabulary! Consider adding more descriptive adjectives. Your verb tenses are mostly correct.';
             feedback.classList.remove('hidden');
@@ -1020,7 +555,7 @@
                 'Describe your best friend or family member.'
             ];
             const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
-            
+
             document.querySelector('.writing-prompt').innerHTML = `
                 <strong>Writing Prompt:</strong> ${randomPrompt} (100-150 words)
             `;
@@ -1035,26 +570,26 @@
         // Utility functions
         function setLanguage(language) {
             currentLanguage = language;
-            
+
             // Update active language button
             document.querySelectorAll('.lang-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
             event.target.classList.add('active');
-            
+
             // Reset tools with new language data
             currentVocabIndex = 0;
             currentGrammarIndex = 0;
-            
+
             // Update vocab card
             const vocabData = languageData[currentLanguage].vocab[0];
             document.getElementById('vocabWord').textContent = vocabData.word;
             document.getElementById('vocabTranslation').textContent = vocabData.translation;
             document.getElementById('vocabExample').textContent = vocabData.example;
-            
+
             // Reset grammar
             resetGrammar();
-            
+
             alert(`Switched to ${language.charAt(0).toUpperCase() + language.slice(1)} learning mode!`);
         }
 
@@ -1067,9 +602,9 @@
         }
 
         // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             console.log('Language Learning Hub loaded successfully!');
-            
+
             // Set initial vocab word
             const vocabData = languageData[currentLanguage].vocab[0];
             document.getElementById('vocabWord').textContent = vocabData.word;
@@ -1078,4 +613,5 @@
         });
     </script>
 </body>
+
 </html>
