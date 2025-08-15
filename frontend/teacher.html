@@ -1,0 +1,558 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard - Language Learning Hub</title>
+    <link rel="stylesheet" href="./static/css/teacher.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            🌐 Language Learning Hub - Teacher Dashboard
+        </div>
+        <div class="user-info">
+            <span>Welcome, Ms. Schmidt</span>
+            <div class="user-avatar">MS</div>
+        </div>
+    </header>
+
+    <!-- Dashboard -->
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="nav-item active" onclick="showSection('overview')">
+                📊 Overview
+            </div>
+            <div class="nav-item" onclick="showSection('vocabulary')">
+                📚 Vocabulary Lists
+            </div>
+            <div class="nav-item" onclick="showSection('students')">
+                👥 Students
+            </div>
+            <div class="nav-item" onclick="showSection('progress')">
+                📈 Progress Tracking
+            </div>
+            <div class="nav-item" onclick="showSection('tools')">
+                🛠️ Tool Management
+            </div>
+            <div class="nav-item" onclick="showSection('settings')">
+                ⚙️ Settings
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Overview Section -->
+            <div id="overview-section" class="section-content">
+                <!-- Filters for Classes, Groups, Subjects, Lessons -->
+                <div class="filter-grid">
+                    <select class="form-input">
+                        <option>Select Class</option>
+                        <option>Class A</option>
+                        <option>Class B</option>
+                        <option>Class C</option>
+                    </select>
+                    <select class="form-input">
+                        <option>Select Group</option>
+                        <option>Group 1</option>
+                        <option>Group 2</option>
+                        <option>Group 3</option>
+                    </select>
+                    <select class="form-input">
+                        <option>Select Subject</option>
+                        <option>Spanish</option>
+                        <option>French</option>
+                        <option>German</option>
+                        <option>Italian</option>
+                        <option>English</option>
+                    </select>
+                    <select class="form-input">
+                        <option>Select Lesson</option>
+                        <option>Lesson 1: Basics</option>
+                        <option>Lesson 2: Verbs</option>
+                        <option>Lesson 3: Grammar</option>
+                    </select>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Total Students</div>
+                        <div class="stat-value">32</div>
+                        <div class="stat-label">Active learners</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Vocabulary Lists</div>
+                        <div class="stat-value">12</div>
+                        <div class="stat-label">Created this month</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Avg. Progress</div>
+                        <div class="stat-value">78%</div>
+                        <div class="stat-label">Class completion rate</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Study Time</div>
+                        <div class="stat-value">45h</div>
+                        <div class="stat-label">Total this week</div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Recent Student Activity</h2>
+                        <button class="btn btn-secondary">View All</button>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>List</th>
+                                <th>Progress</th>
+                                <th>Time Spent</th>
+                                <th>Last Active</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Emma Johnson</td>
+                                <td>Spanish Basics</td>
+                                <td>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 85%"></div>
+                                    </div>
+                                </td>
+                                <td>2h 15m</td>
+                                <td>10 min ago</td>
+                            </tr>
+                            <tr>
+                                <td>Max Mueller</td>
+                                <td>French Verbs</td>
+                                <td>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 60%"></div>
+                                    </div>
+                                </td>
+                                <td>1h 45m</td>
+                                <td>1 hour ago</td>
+                            </tr>
+                            <tr>
+                                <td>Lisa Chen</td>
+                                <td>German Grammar</td>
+                                <td>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 92%"></div>
+                                    </div>
+                                </td>
+                                <td>3h 20m</td>
+                                <td>2 hours ago</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Vocabulary Lists Section -->
+            <div id="vocabulary-section" class="section-content" style="display: none;">
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Vocabulary Lists</h2>
+                        <button class="btn btn-primary" onclick="openModal('vocabulary-modal')">
+                            + Create New List
+                        </button>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>List Name</th>
+                                <th>Language</th>
+                                <th>Words</th>
+                                <th>Students</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Spanish Basics</td>
+                                <td><span class="tag">🇪🇸 Spanish</span></td>
+                                <td>50</td>
+                                <td>28</td>
+                                <td>Oct 15, 2024</td>
+                                <td>
+                                    <div class="action-icons">
+                                        <div class="action-icon" title="Share Link">🔗</div>
+                                        <div class="action-icon" title="Edit">✏️</div>
+                                        <div class="action-icon" title="Delete">🗑️</div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>French Verbs</td>
+                                <td><span class="tag">🇫🇷 French</span></td>
+                                <td>120</td>
+                                <td>15</td>
+                                <td>Oct 20, 2024</td>
+                                <td>
+                                    <div class="action-icons">
+                                        <div class="action-icon" title="Share Link">🔗</div>
+                                        <div class="action-icon" title="Edit">✏️</div>
+                                        <div class="action-icon" title="Delete">🗑️</div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>German Grammar</td>
+                                <td><span class="tag">🇩🇪 German</span></td>
+                                <td>75</td>
+                                <td>32</td>
+                                <td>Oct 25, 2024</td>
+                                <td>
+                                    <div class="action-icons">
+                                        <div class="action-icon" title="Share Link">🔗</div>
+                                        <div class="action-icon" title="Edit">✏️</div>
+                                        <div class="action-icon" title="Delete">🗑️</div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Students Section -->
+            <div id="students-section" class="section-content" style="display: none;">
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Student Management</h2>
+                        <button class="btn btn-primary" onclick="openModal('student-modal')">
+                            + Add Student
+                        </button>
+                    </div>
+                    
+                    <div id="students-list">
+                        <div class="student-card">
+                            <div class="student-header">
+                                <div>
+                                    <div class="student-name">Emma Johnson</div>
+                                    <div style="color: #666; font-size: 0.9rem;">emma.johnson@school.edu</div>
+                                </div>
+                                <span class="tag active">Active</span>
+                            </div>
+                            <div class="student-stats">
+                                <div class="stat-item">
+                                    <div class="stat-number">3</div>
+                                    <div class="stat-desc">Lists Assigned</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-number">85%</div>
+                                    <div class="stat-desc">Avg. Progress</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-number">12h</div>
+                                    <div class="stat-desc">Study Time</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-number">250</div>
+                                    <div class="stat-desc">Words Learned</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="student-card">
+                            <div class="student-header">
+                                <div>
+                                    <div class="student-name">Max Mueller</div>
+                                    <div style="color: #666; font-size: 0.9rem;">max.mueller@school.edu</div>
+                                </div>
+                                <span class="tag active">Active</span>
+                            </div>
+                            <div class="student-stats">
+                                <div class="stat-item">
+                                    <div class="stat-number">2</div>
+                                    <div class="stat-desc">Lists Assigned</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-number">72%</div>
+                                    <div class="stat-desc">Avg. Progress</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-number">8h</div>
+                                    <div class="stat-desc">Study Time</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-number">180</div>
+                                    <div class="stat-desc">Words Learned</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Tracking Section -->
+            <div id="progress-section" class="section-content" style="display: none;">
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Detailed Progress Tracking</h2>
+                        <select class="form-input" style="width: 200px;">
+                            <option>All Students</option>
+                            <option>Class A</option>
+                            <option>Class B</option>
+                        </select>
+                    </div>
+                    
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>List</th>
+                                <th>Started</th>
+                                <th>Sessions</th>
+                                <th>Correct/Incorrect</th>
+                                <th>Completion</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Emma Johnson</td>
+                                <td>Spanish Basics</td>
+                                <td>Oct 20, 2024</td>
+                                <td>12</td>
+                                <td>42/8</td>
+                                <td>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 85%"></div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.85rem;">
+                                        View Details
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Max Mueller</td>
+                                <td>French Verbs</td>
+                                <td>Oct 22, 2024</td>
+                                <td>8</td>
+                                <td>72/48</td>
+                                <td>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 60%"></div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.85rem;">
+                                        View Details
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tool Management Section -->
+            <div id="tools-section" class="section-content" style="display: none;">
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Tool Management</h2>
+                        <p style="color: #666;">Control which learning tools students can access</p>
+                    </div>
+                    
+                    <div class="tool-grid">
+                        <div class="tool-card active">
+                            <div>
+                                <div style="font-weight: 600;">📝 Grammar Trainer</div>
+                                <div style="font-size: 0.85rem; color: #666;">Practice grammar rules</div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="tool-card active">
+                            <div>
+                                <div style="font-weight: 600;">📚 Vocabulary Builder</div>
+                                <div style="font-size: 0.85rem; color: #666;">Flashcards & memorization</div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="tool-card active">
+                            <div>
+                                <div style="font-weight: 600;">💬 Conversation Practice</div>
+                                <div style="font-size: 0.85rem; color: #666;">AI-powered dialogues</div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="tool-card">
+                            <div>
+                                <div style="font-weight: 600;">🎤 Pronunciation Helper</div>
+                                <div style="font-size: 0.85rem; color: #666;">Speech recognition</div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="tool-card">
+                            <div>
+                                <div style="font-weight: 600;">📖 Reading Comprehension</div>
+                                <div style="font-size: 0.85rem; color: #666;">Text analysis</div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="tool-card active">
+                            <div>
+                                <div style="font-weight: 600;">✍️ Writing Exercises</div>
+                                <div style="font-size: 0.85rem; color: #666;">Essay & text creation</div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 2rem;">
+                        <h3 style="margin-bottom: 1rem;">Tool Usage Limits</h3>
+                        <div class="form-group">
+                            <label class="form-label">Maximum daily tool usage per student</label>
+                            <select class="form-input" style="width: 250px;">
+                                <option>Unlimited</option>
+                                <option>1 hour</option>
+                                <option>2 hours</option>
+                                <option>3 hours</option>
+                                <option>Custom...</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Create Vocabulary List Modal -->
+    <div id="vocabulary-modal" class="modal">
+        <div class="modal-content">
+            <div class="section-header">
+                <h2 class="section-title">Create New Vocabulary List</h2>
+                <button class="btn btn-secondary" onclick="closeModal('vocabulary-modal')">✕</button>
+            </div>
+            
+            <form>
+                <div class="form-group">
+                    <label class="form-label">List Name</label>
+                    <input type="text" class="form-input" placeholder="e.g., Spanish Basics - Unit 1">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Language</label>
+                    <select class="form-input">
+                        <option>Spanish</option>
+                        <option>French</option>
+                        <option>German</option>
+                        <option>Italian</option>
+                        <option>English</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Vocabulary Words</label>
+                    <textarea class="form-textarea" placeholder="Enter words in format: word = translation
+perro = dog
+gato = cat
+casa = house"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Or Upload CSV or TXT File</label>
+                    <input type="file" class="form-input" accept=".csv,.txt">
+                    <small style="color: #666;">TXT files should use the format: word = translation per line</small>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Assign to Students</label>
+                    <select class="form-input" multiple style="height: 120px;">
+                        <option>All Students</option>
+                        <option>Class A</option>
+                        <option>Class B</option>
+                        <option>Emma Johnson</option>
+                        <option>Max Mueller</option>
+                        <option>Lisa Chen</option>
+                    </select>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="submit" class="btn btn-primary">Create List & Generate Link</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('vocabulary-modal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Student Modal -->
+    <div id="student-modal" class="modal">
+        <div class="modal-content">
+            <div class="section-header">
+                <h2 class="section-title">Add New Student</h2>
+                <button class="btn btn-secondary" onclick="closeModal('student-modal')">✕</button>
+            </div>
+            
+            <form>
+                <div class="form-group">
+                    <label class="form-label">Student Name</label>
+                    <input type="text" class="form-input" placeholder="Full name">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" placeholder="student@school.edu">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Class</label>
+                    <select class="form-input">
+                        <option>Class A</option>
+                        <option>Class B</option>
+                        <option>Class C</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Initial Password</label>
+                    <input type="text" class="form-input" value="Welcome123!" readonly>
+                    <small style="color: #666;">Student will be prompted to change on first login</small>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="submit" class="btn btn-primary">Create Student Account</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('student-modal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="./static/js/teacher.js"></script>
+</body>
+</html>

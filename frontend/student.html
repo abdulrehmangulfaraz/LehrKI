@@ -1,0 +1,327 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - Language Learning Hub</title>
+    <link rel="stylesheet" href="./static/css/student.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            🌐 Language Learning Hub - Student Dashboard
+        </div>
+        <div class="user-info">
+            <span>Welcome, Emma Johnson</span>
+            <div class="user-avatar">EJ</div>
+        </div>
+    </header>
+
+    <!-- Dashboard -->
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="nav-item active" onclick="showSection('dashboard')">
+                📊 Dashboard
+            </div>
+            <div class="nav-item" onclick="showSection('vocabulary')">
+                📚 Vocabulary Lists
+            </div>
+            <div class="nav-item" onclick="showSection('practice')">
+                🧠 Practice Tools
+            </div>
+            <div class="nav-item" onclick="showSection('progress')">
+                📈 My Progress
+            </div>
+            <div class="nav-item" onclick="showSection('settings')">
+                ⚙️ Settings
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <div id="dashboard-section" class="section-content">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Words Learned</div>
+                        <div class="stat-value">250</div>
+                        <div class="stat-label">This month</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Current Streak</div>
+                        <div class="stat-value">7</div>
+                        <div class="stat-label">Days in a row</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Avg. Accuracy</div>
+                        <div class="stat-value">85%</div>
+                        <div class="stat-label">In quizzes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Study Time</div>
+                        <div class="stat-value">12h</div>
+                        <div class="stat-label">This week</div>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Recommended Practice</h2>
+                        <button class="btn btn-secondary">View All</button>
+                    </div>
+                    <div class="list-grid">
+                        <div class="list-card">
+                            <div class="list-name">Spanish Basics</div>
+                            <div class="list-info">50 words • Assigned by Ms. Schmidt</div>
+                            <div class="progress-bar" style="margin-bottom: 1rem;">
+                                <div class="progress-fill" style="width: 85%"></div>
+                            </div>
+                            <button class="btn btn-primary" style="width: 100%;" onclick="startPractice('flashcards', 'Spanish Basics')">Start Flashcards</button>
+                        </div>
+                        <div class="list-card">
+                            <div class="list-name">French Verbs</div>
+                            <div class="list-info">120 words • Assigned by Ms. Schmidt</div>
+                            <div class="progress-bar" style="margin-bottom: 1rem;">
+                                <div class="progress-fill" style="width: 60%"></div>
+                            </div>
+                            <button class="btn btn-primary" style="width: 100%;" onclick="startPractice('quiz', 'French Verbs')">Take Quiz</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vocabulary Lists Section -->
+            <div id="vocabulary-section" class="section-content" style="display: none;">
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">My Vocabulary Lists</h2>
+                        <button class="btn btn-primary" onclick="openModal('import-modal')">
+                            Import List
+                        </button>
+                    </div>
+                    <div class="list-grid">
+                        <div class="list-card">
+                            <div class="list-name">Spanish Basics</div>
+                            <div class="list-info">50 words • Progress: 85%</div>
+                            <ul style="list-style: disc; padding-left: 20px; color: #666; font-size: 0.9rem;">
+                                <li>perro = dog</li>
+                                <li>gato = cat</li>
+                                <li>casa = house</li>
+                                <li>amigo = friend</li>
+                                <li>comida = food</li>
+                            </ul>
+                            <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="startPractice('flashcards', 'Spanish Basics')">Practice Now</button>
+                        </div>
+                        <div class="list-card">
+                            <div class="list-name">French Verbs</div>
+                            <div class="list-info">120 words • Progress: 60%</div>
+                            <ul style="list-style: disc; padding-left: 20px; color: #666; font-size: 0.9rem;">
+                                <li>être = to be</li>
+                                <li>avoir = to have</li>
+                                <li>aller = to go</li>
+                                <li>faire = to do/make</li>
+                                <li>dire = to say</li>
+                            </ul>
+                            <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="startPractice('quiz', 'French Verbs')">Practice Now</button>
+                        </div>
+                        <div class="list-card">
+                            <div class="list-name">German Grammar</div>
+                            <div class="list-info">75 words • Progress: 92%</div>
+                            <ul style="list-style: disc; padding-left: 20px; color: #666; font-size: 0.9rem;">
+                                <li>Haus = house</li>
+                                <li>Auto = car</li>
+                                <li>Freund = friend</li>
+                                <li>Essen = food</li>
+                                <li>Trinken = drink</li>
+                            </ul>
+                            <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="startPractice('flashcards', 'German Grammar')">Practice Now</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practice Tools Section -->
+            <div id="practice-section" class="section-content" style="display: none;">
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Practice Tools</h2>
+                    </div>
+                    <div class="list-grid">
+                        <div class="list-card">
+                            <div class="list-name">Flashcards</div>
+                            <div class="list-info">Flip cards to memorize words</div>
+                            <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="showFlashcardDemo()">Try Demo</button>
+                        </div>
+                        <div class="list-card">
+                            <div class="list-name">Quiz</div>
+                            <div class="list-info">Multiple choice questions</div>
+                            <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="showQuizDemo()">Try Demo</button>
+                        </div>
+                        <div class="list-card">
+                            <div class="list-name">Conversation Practice</div>
+                            <div class="list-info">AI-powered dialogues</div>
+                            <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="showConversationDemo()">Try Demo</button>
+                        </div>
+                        <div class="list-card">
+                            <div class="list-name">Writing Exercises</div>
+                            <div class="list-info">Practice writing sentences</div>
+                            <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="showWritingDemo()">Try Demo</button>
+                        </div>
+                    </div>
+
+                    <!-- Flashcard Demo -->
+                    <div id="flashcard-demo" style="display: none; margin-top: 2rem;">
+                        <h3>Flashcard Demo (Spanish Basics)</h3>
+                        <div class="score-display">
+                            <span>Correct: 2</span>
+                            <span>Incorrect: 1</span>
+                            <span>Accuracy: 67%</span>
+                        </div>
+                        <div class="flashcard" id="flashcard">
+                            <div class="flashcard-inner">
+                                <div class="flashcard-front">perro</div>
+                                <div class="flashcard-back">dog</div>
+                            </div>
+                        </div>
+                        <div style="text-align: center; display: flex; justify-content: center; gap: 1rem;">
+                            <button class="btn btn-secondary" onclick="flipCard()">Flip</button>
+                            <button class="btn btn-primary" onclick="nextCard()">Next</button>
+                        </div>
+                    </div>
+
+                    <!-- Quiz Demo -->
+                    <div id="quiz-demo" style="display: none; margin-top: 2rem;">
+                        <h3>Quiz Demo (French Verbs)</h3>
+                        <div class="score-display">
+                            <span>Correct: 3</span>
+                            <span>Incorrect: 1</span>
+                            <span>Accuracy: 75%</span>
+                        </div>
+                        <div class="quiz-question">
+                            <p style="font-size: 1.2rem; font-weight: 600; margin-bottom: 1rem;">What does "être" mean?</p>
+                            <div class="quiz-options">
+                                <div class="quiz-option" onclick="checkAnswer(this, false)">to have</div>
+                                <div class="quiz-option" onclick="checkAnswer(this, true)">to be</div>
+                                <div class="quiz-option" onclick="checkAnswer(this, false)">to go</div>
+                                <div class="quiz-option" onclick="checkAnswer(this, false)">to do</div>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" style="display: block; margin: 0 auto;">Next Question</button>
+                    </div>
+
+                    <!-- Conversation Demo -->
+                    <div id="conversation-demo" style="display: none; margin-top: 2rem;">
+                        <h3>Conversation Practice Demo (Spanish Basics)</h3>
+                        <div class="score-display">
+                            <span>Correct Responses: 4</span>
+                            <span>Incorrect: 2</span>
+                            <span>Score: 80/100</span>
+                        </div>
+                        <div class="chat-window">
+                            <div class="chat-message ai">Hola! ¿Qué es 'perro' en inglés?</div>
+                            <div class="chat-message user">Dog</div>
+                            <div class="chat-message ai">¡Correcto! 'Perro' significa 'dog'. Buena explicación. Ahora, ¿qué es 'gato'?</div>
+                            <div class="chat-message user">Cat</div>
+                            <div class="chat-message ai">¡Bien! 'Gato' es 'cat'. Para mejorar: Usa oraciones completas como 'Gato significa cat en inglés.'</div>
+                        </div>
+                        <div class="chat-input">
+                            <input type="text" placeholder="Type your response...">
+                            <button class="btn btn-primary">Send</button>
+                        </div>
+                    </div>
+
+                    <!-- Writing Demo -->
+                    <div id="writing-demo" style="display: none; margin-top: 2rem;">
+                        <h3>Writing Exercise Demo (French Verbs)</h3>
+                        <div class="score-display">
+                            <span>Correct: 2</span>
+                            <span>Incorrect: 1</span>
+                            <span>Overall Score: 85%</span>
+                        </div>
+                        <div class="writing-prompt">"I am happy." (Translate to French)</div>
+                        <textarea class="writing-input" placeholder="Your translation...">Je suis heureux.</textarea>
+                        <button class="btn btn-primary" style="display: block; margin-bottom: 1rem;">Submit</button>
+                        <div class="writing-feedback">
+                            <div class="feedback-section">
+                                <strong>Correction:</strong> Je suis heureux. (Correct!)
+                            </div>
+                            <div class="feedback-section">
+                                <strong>Improvement:</strong> For feminine: "Je suis heureuse." Consider context.
+                            </div>
+                            <div class="feedback-section">
+                                <strong>Evaluation:</strong> 9/10 - Excellent vocabulary, minor gender note.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Section -->
+            <div id="progress-section" class="section-content" style="display: none;">
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">My Progress</h2>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">Overall Progress</div>
+                            <div class="stat-value">78%</div>
+                            <div class="progress-bar" style="margin-top: 0.5rem;">
+                                <div class="progress-fill" style="width: 78%"></div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Words Mastered</div>
+                            <div class="stat-value">450</div>
+                            <div class="stat-label">Out of 600</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Quizzes Completed</div>
+                            <div class="stat-value">15</div>
+                            <div class="stat-label">Avg. Score: 82%</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Achievements</div>
+                            <div class="stat-value">5</div>
+                            <div class="stat-label">Badges earned</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Import List Modal -->
+    <div id="import-modal" class="modal">
+        <div class="modal-content">
+            <div class="section-header">
+                <h2 class="section-title">Import Vocabulary List</h2>
+                <button class="btn btn-secondary" onclick="closeModal('import-modal')">✕</button>
+            </div>
+            
+            <form>
+                <div class="form-group">
+                    <label class="form-label">List Name</label>
+                    <input type="text" class="form-input" placeholder="e.g., My Custom List">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Upload TXT File</label>
+                    <input type="file" class="form-input" accept=".txt">
+                    <small style="color: #666;">Format: word = translation per line</small>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="submit" class="btn btn-primary">Import List</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('import-modal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+<script src="./static/js/student.js"></script>
+</body>
+</html>
