@@ -1,7 +1,7 @@
 # backend/app/db/crud.py
 
 from getpass import getuser
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload # Import joinedload
 from . import models
 from .. import schemas
 from ..core.auth import get_password_hash
@@ -33,7 +33,8 @@ def create_user_prompt(db: Session, prompt: schemas.PromptCreate, user_id: int):
 
 def get_all_prompts(db: Session, skip: int = 0, limit: int = 100):
     """Fetch all prompts from all users for the public collection."""
-    return db.query(models.Prompt).order_by(models.Prompt.id.desc()).offset(skip).limit(limit).all()
+    # Eager load the owner information to avoid lazy loading issues
+    return db.query(models.Prompt).options(joinedload(models.Prompt.owner)).order_by(models.Prompt.id.desc()).offset(skip).limit(limit).all()
 
 def get_prompt(db: Session, prompt_id: int):
     """Fetch a single prompt by its ID."""
@@ -72,13 +73,14 @@ def get_shared_items_by_user(db: Session, user_id: int, skip: int = 0, limit: in
 
 def get_all_shared_items(db: Session, skip: int = 0, limit: int = 100):
     """Fetch all shared items from all users for the public collection."""
-    return db.query(models.SharedItem).order_by(models.SharedItem.id.desc()).offset(skip).limit(limit).all()
+    # The fix is here: Eager load the 'owner' relationship
+    return db.query(models.SharedItem).options(joinedload(models.SharedItem.owner)).order_by(models.SharedItem.id.desc()).offset(skip).limit(limit).all()
 
 # Add these two new functions at the end of crud.py
 
 def update_user_details(db: Session, user_id: int, user_update: schemas.UserUpdate):
     """Update a user's full name."""
-    db_user = getuser(db, user_id=user_id)
+    db_user = get_user_by_id(db, user_id=user_id)
     if db_user and user_update.full_name:
         db_user.full_name = user_update.full_name
         db.commit()
