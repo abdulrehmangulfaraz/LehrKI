@@ -132,8 +132,10 @@ async function deleteUser(userId) {
 
 function addUser() {
     document.getElementById('addUserForm').reset();
+    document.getElementById('addUserAlert').innerHTML = '';
     showModal('addUserModal');
 }
+
 
 // --- UI AND NAVIGATION FUNCTIONS ---
 
