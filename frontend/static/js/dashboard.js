@@ -111,6 +111,7 @@ async function fetchAndDisplayPrompts() {
                             <button class="btn btn-small btn-primary" onclick="usePrompt('${prompt.text}')">Use</button>
                             <button class="btn btn-small btn-secondary" onclick="editPrompt(${prompt.id})">Edit</button>
                             <button class="btn btn-small btn-danger" onclick="deletePrompt(${prompt.id})">Delete</button>
+                            <button class="btn btn-small btn-secondary" onclick="sharePrompt(${prompt.id})">Share</button>
                         </div>
                     `;
                 promptListDiv.appendChild(promptElement);
@@ -127,6 +128,13 @@ function usePrompt(promptText) {
         alert('Prompt copied to clipboard!');
     });
 }
+
+// *** NEWLY ADDED FUNCTION ***
+function sharePrompt(promptId) {
+    // For now, this is a placeholder. In the future, we can make this open the "Share Content" modal.
+    alert(`Sharing functionality for prompt ID ${promptId} will be implemented in a future step.`);
+}
+// ***************************
 
 async function editPrompt(promptId) {
     const token = localStorage.getItem('accessToken');
