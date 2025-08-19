@@ -1,11 +1,12 @@
 # backend/app/db/crud.py
 
 from getpass import getuser
-from sqlalchemy.orm import Session, joinedload # Import joinedload
+from sqlalchemy.orm import Session, joinedload # Keep joinedload import
 from . import models
 from .. import schemas
 from ..core.auth import get_password_hash
 
+# ... (keep all functions from get_user_by_email to get_all_shared_items the same)
 def get_user_by_email(db: Session, email: str):
     """Fetch a single user by their email address."""
     return db.query(models.User).filter(models.User.email == email).first()
@@ -76,10 +77,11 @@ def get_all_shared_items(db: Session, skip: int = 0, limit: int = 100):
     # The fix is here: Eager load the 'owner' relationship
     return db.query(models.SharedItem).options(joinedload(models.SharedItem.owner)).order_by(models.SharedItem.id.desc()).offset(skip).limit(limit).all()
 
-# Add these two new functions at the end of crud.py
 
+# THIS IS THE FUNCTION TO FIX
 def update_user_details(db: Session, user_id: int, user_update: schemas.UserUpdate):
     """Update a user's full name."""
+    # FIX: Changed getuser to get_user_by_id
     db_user = get_user_by_id(db, user_id=user_id)
     if db_user and user_update.full_name:
         db_user.full_name = user_update.full_name
