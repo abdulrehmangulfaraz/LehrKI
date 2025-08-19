@@ -1,4 +1,3 @@
-
 // --- MODAL AND NAVIGATION FUNCTIONS (WITH BUG FIX) ---
 
 function showModal(modalType) {
@@ -221,6 +220,58 @@ async function fetchAndDisplaySharedItems() {
         sharedListDiv.innerHTML = '<p style="color: red;">Could not load shared items.</p>';
     }
 }
+
+// --- NEWLY IMPLEMENTED FUNCTIONS ---
+async function viewShared(itemId) {
+    const token = localStorage.getItem('accessToken');
+    try {
+        // Note: We assume an endpoint exists to get a single shared item.
+        // If not, we would need to filter from the full list.
+        // This is a placeholder for `/api/shared-items/${itemId}`
+        const response = await fetch('/api/shared-items/me', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!response.ok) throw new Error('Could not fetch item details.');
+
+        const items = await response.json();
+        const item = items.find(i => i.id === itemId);
+
+        if (item) {
+            alert(`Title: ${item.title}\nType: ${item.content_type}\nDescription: ${item.description || 'N/A'}\nURL: ${item.url || 'N/A'}`);
+        } else {
+            throw new Error('Item not found.');
+        }
+    } catch (error) {
+        alert(`Error: ${error.message}`);
+    }
+}
+
+async function useCommunityItem(itemId) {
+    const token = localStorage.getItem('accessToken');
+    try {
+        const response = await fetch('/api/shared-items/public', {
+             headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!response.ok) throw new Error('Could not fetch community item details.');
+
+        const items = await response.json();
+        const item = items.find(i => i.id === itemId);
+
+        if (item) {
+            if (item.url) {
+                window.open(item.url, '_blank');
+            } else {
+                alert(`Using Item: ${item.title}\n\n${item.description}`);
+            }
+        } else {
+            throw new Error('Community item not found.');
+        }
+    } catch (error) {
+        alert(`Error: ${error.message}`);
+    }
+}
+// --- END OF NEWLY IMPLEMENTED FUNCTIONS ---
+
 
 // --- FORM SUBMISSION HANDLERS ---
 
