@@ -200,7 +200,6 @@ function searchMenu(query) {
 function switchTab(tabElement, tabId) {
     tabElement.parentElement.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
     tabElement.classList.add('active');
-    // In a real app, you'd filter the user list here based on the tab
     console.log('Filtering users by:', tabId);
 }
 
@@ -220,6 +219,23 @@ function logout() {
         window.location.href = '/index.html';
     }
 }
+
+// --- DUMMY FUNCTIONS FOR UI ---
+function showNotifications() { alert('Notifications clicked!'); }
+function toggleTheme() { alert('Theme toggle clicked!'); }
+function showQuickActions() { alert('Quick actions clicked!'); }
+function refreshHealth() { console.log('Refreshing health...'); }
+function expandHealth() { console.log('Expanding health view...'); }
+function filterActivity() { alert('Filter activity clicked!'); }
+function viewAllActivity() { showSection('activity'); }
+function exportMetrics() { alert('Exporting metrics...'); }
+function clearAlerts() { console.log('Clearing alerts...'); }
+function editPasswordPolicy() { alert('Editing password policy...'); }
+function dismissAlert(element) {
+    element.parentElement.style.animation = 'fadeOut 0.3s ease';
+    setTimeout(() => element.parentElement.remove(), 300);
+}
+
 
 // --- EVENT LISTENERS ---
 
